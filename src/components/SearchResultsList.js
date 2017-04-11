@@ -5,8 +5,9 @@ import PaperCard from './PaperCard';
 class SearchResultsList extends Component {
   render() {
     const { results } = this.props;
+    const { container } = styles;
     return (
-      <div>
+      <div style={container}>
         {results.length ? results.map(result =>
           <PaperCard key={result.id} data={result} />
         ) : null}
@@ -14,6 +15,15 @@ class SearchResultsList extends Component {
     );
   }
 }
+
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    marginLeft: 30
+  }
+};
 
 const mapStateToProps = state => ({
   results: state.arxiv.searchResults
