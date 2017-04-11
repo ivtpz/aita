@@ -5,5 +5,5 @@ export default {
   NeutralDark: '#8c8889',
   NeutralLight: '#d5e2df',
   Accent: '#fdf1d8',
-  Mint: '#98ffaa'
+  Mint: '#98FFDE'
 };
