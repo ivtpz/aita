@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import colors from '../theme/colors';
 
+const linkStyle = {
+  color: colors.NeutralDark,
+  fontSize: 25,
+  display: 'inline',
+  margin: '0px 5px 0px 5px',
+  cursor: 'pointer'
+};
+
 class PaperCard extends Component {
   constructor(props) {
     super(props);
@@ -18,15 +26,55 @@ class PaperCard extends Component {
 
   toggleIconHoverOff = () => this.setState({ iconHover: false });
 
+  /**
+   * @param {string} type
+   * @param {string} link
+   * @return {*} jsx
+   */
+  linkMaker = (type, link) => {
+    let faclass;
+    switch (type) {
+      case 'application/pdf':
+        faclass = 'pdf';
+        break;
+      case 'text/html':
+        faclass = 'text';
+        break;
+      default:
+        break;
+    }
+    if (faclass) {
+      const className = `fa fa-file-${faclass}-o`;
+      return (
+        <a href={link} target='_blank' >
+          <i
+            style={linkStyle}
+            className={className}
+          ></i>
+        </a>
+      );
+    }
+    return null;
+  }
+
   render() {
-    const { data: {
-      id,
-      published,
-      title,
-      summary,
-      author: { name } }
+    const { 
+      data: {
+        id,
+        published,
+        title,
+        summary,
+        author,
+        link
+      }
     } = this.props;
-    const { card, heading, body, foot, icon, iconHover, mainText, author, hover, link } = styles;
+    const authors = Array.isArray(author) ?
+    author.map((a, i) => (i === author.length - 1 ? a.name : `${a.name},`)) :
+    [author.name];
+    const {
+      card, heading, body, foot, icon,
+      iconHover, mainText, authorStyle, hover
+    } = styles;
     return (
       <div
         style={
@@ -39,7 +87,7 @@ class PaperCard extends Component {
       >
         <div style={heading}>{title}</div>
         <div style={body}>
-          <div style={author}>{name}</div>
+          {authors.map(name => <div style={authorStyle}>{name}</div>)}
           <i
             style={
               this.state.iconHover ?
@@ -53,9 +101,9 @@ class PaperCard extends Component {
           <div style={mainText} >{summary}</div>
         </div>
         <div style={foot}>
-          <i style={link} className='fa fa-plus-circle'></i>
-          <i style={link} className='fa fa-plus-circle'></i>
-          <i style={link} className='fa fa-plus-circle'></i>
+          {link && link.map(l =>
+            this.linkMaker(l._type, l._href) // eslint-disable-line
+          )}
         </div>
       </div>
     );
@@ -84,9 +132,11 @@ const styles = {
     backgroundColor: 'white',
     padding: '8px 0 0 8px'
   },
-  author: {
+  authorStyle: {
     borderBottom: `1px solid ${colors.NeutralDark}`,
-    display: 'inline'
+    display: 'inline',
+    color: colors.PrimaryDark,
+    marginRight: 5
   },
   mainText: {
     padding: '8px 8px 8px 0'
@@ -108,11 +158,6 @@ const styles = {
   },
   iconHover: {
     textShadow: `1px 1px 2px ${colors.PrimaryDark}`
-  },
-  link: {
-    color: colors.NeutralDark,
-    fontSize: 25,
-    display: 'inline'
   }
 };
 
