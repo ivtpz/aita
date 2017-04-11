@@ -1,6 +1,7 @@
 import express from 'express';
 import { urlencoded, json } from 'body-parser';
 import { AuthenticationClient } from 'auth0';
+import path from 'path';
 import { findOrAddUser, addReference } from './routes';
 
 const app = express();
@@ -13,9 +14,13 @@ const auth0 = new AuthenticationClient({
 
 app.use(urlencoded({ extended: false }));
 app.use(json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.get('/user', findOrAddUser);
 app.put('/user', addReference);
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/index.html'));
+});
 
 app.listen(port, () => console.log(`Listening on http://localhost:${port}`));
