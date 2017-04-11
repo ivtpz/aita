@@ -21,7 +21,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-around',
-    marginLeft: 30
+    alignItems: 'center'
   }
 };
 
