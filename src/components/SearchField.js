@@ -9,6 +9,16 @@ const inputStyle = {
   border: `1px solid ${colors.NeutralDark}`
 };
 
+const searchIcon = {
+  position: 'relative',
+  fontSize: '1.2em',
+  zIndex: 1,
+  left: -25,
+  top: -1,
+  color: colors.PrimaryDark,
+  cursor: 'pointer'
+};
+
 const SearchField = ({ onSearchInput, search, filter }) => (
   <div>
     <input
@@ -16,11 +26,11 @@ const SearchField = ({ onSearchInput, search, filter }) => (
       placeholder={filter}
       onChange={onSearchInput}
     />
-    <button
-      type='submit'
+    <i
+      style={searchIcon}
+      className='fa fa-search'
       onClick={search}
-    >Search
-    </button>
+    ></i>
   </div>
 );
 
