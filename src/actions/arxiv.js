@@ -1,5 +1,6 @@
 import { get } from 'axios';
 import X2JS from 'x2js';
+import dummyData from '../helpers/dummyArxivData';
 
 const x2js = new X2JS();
 
@@ -17,6 +18,10 @@ const setSearchResults = ({ feed: { entry } }) => ({
 
 const searchArxiv = () => async (dispatch, getState) => {
   const { query } = getState().arxiv;
+  // TODO: FILTER THE DUMMY DATA
+  // console.log(dummyData)
+  // return dispatch(setSearchResults(dummyData));
+  // TODO: ENV VARS TO RETURN DUMMY OR REAL DATA
   const { data } = await get(url, {
     params: {
       search_query: `all:${query}`
