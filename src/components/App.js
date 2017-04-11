@@ -5,6 +5,8 @@ import { initializeLock, showAuthLock } from '../actions/auth';
 import { setSearchQuery, searchArxiv } from '../actions/arxiv';
 // Components
 import SearchResultsList from './SearchResultsList';
+import SearchField from './SearchField';
+import Menu from './Menu';
 
 class App extends Component {
 
@@ -14,26 +16,28 @@ class App extends Component {
 
   render() {
     const {
-      onClick,
+      openLock,
       onSearchInput,
-      search
+      search,
+      params: {
+        filter
+      }
     } = this.props;
     return (
     <div>
-      <input
-        placeholder='Search...'
-        onChange={onSearchInput}
+      <Menu
+        leftLinks={[
+          { text: 'References', action: () => '/saved' },
+          { text: 'Recommendations', action: () => '/recommend' }
+        ]}
+        rightLinks={[{ text: 'Log in', action: openLock }]}
+        title='AITA'
       />
-      <button
-        type='submit'
-        onClick={search}
-      >Search
-      </button>
-      <button
-        type='submit'
-        onClick={onClick}
-      >Sign In
-      </button>
+      <SearchField
+        onSearchInput={onSearchInput}
+        search={search}
+        filter={filter || 'Search...'}
+      />
       <SearchResultsList />
     </div>
     );
@@ -45,7 +49,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onClick: refId => dispatch(showAuthLock(refId)),
+  openLock: refId => dispatch(showAuthLock(refId)),
   onSearchInput: e => dispatch(setSearchQuery(e.target.value)),
   search: () => dispatch(searchArxiv()),
   init: () => dispatch(initializeLock())
