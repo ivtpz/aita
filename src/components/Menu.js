@@ -12,7 +12,7 @@ const menuStyle = {
 
 const leftLinkContainer = {
   display: 'flex',
-  width: '33%'
+  flex: '1 1 0'
 };
 
 const rightLinkContainer = {
@@ -23,7 +23,7 @@ const rightLinkContainer = {
 const titleStyle = {
   fontSize: '4em',
   fontWeight: 'bolder',
-  width: '33%',
+  flex: '1 1 0',
   textAlign: 'center',
   color: colors.PrimaryBright
 };
