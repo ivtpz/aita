@@ -8,6 +8,16 @@ import SearchResultsList from './SearchResultsList';
 import SearchField from './SearchField';
 import Menu from './Menu';
 
+const main = {
+  display: 'flex',
+  flexDirection: 'column'
+};
+
+const searchStyle = {
+  alignSelf: 'flex-end',
+  marginTop: 10
+};
+
 class App extends Component {
 
   componentDidMount() {
@@ -24,7 +34,7 @@ class App extends Component {
       }
     } = this.props;
     return (
-    <div>
+    <div style={main}>
       <Menu
         leftLinks={[
           { text: 'References', action: () => '/saved' },
@@ -33,11 +43,13 @@ class App extends Component {
         rightLinks={[{ text: 'Log in', action: openLock }]}
         title='AITA'
       />
-      <SearchField
-        onSearchInput={onSearchInput}
-        search={search}
-        filter={filter || 'Search...'}
-      />
+      <div style={searchStyle} >
+        <SearchField
+          onSearchInput={onSearchInput}
+          search={search}
+          filter={filter || 'Search...'}
+        />
+      </div>
       <SearchResultsList />
     </div>
     );
