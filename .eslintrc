@@ -1,6 +1,13 @@
 {
   "parser": "babel-eslint",
   "extends": "airbnb-base",
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx"]
+      }
+    }
+  },
   "plugins": [
     "react",
     "import"
@@ -8,7 +15,10 @@
   "rules": {
     "comma-dangle": ["error", "never"],
     "no-plusplus": "off",
-    "react/jsx-uses-vars": 1
+    "no-underscore-dangle": "warn",
+    "react/jsx-uses-vars": 1,
+    "react/jsx-uses-react": 1,
+    "react/jsx-filename-extension": 1
   },
   "parserOptions": {
     "ecmaVersion": 6,
