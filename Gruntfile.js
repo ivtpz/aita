@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 
     watch: {
       browserify: {
-        files: ["src/**/*.js"],
+        files: ["src/**/*.js*"],
         tasks: ["browserify"]
       }
     },
@@ -24,13 +24,14 @@ module.exports = function(grunt) {
         watch: true,
         keepAlive: true,
         browserifyOptions: {
+          extensions: [".js", ".jsx"],
           debug: true,
           insertGlobals: true
         }
       },
       dist: {
         files: {
-          "public/bundle.js": ["src/**/*.js"]
+          "public/bundle.js": ["src/**/*.js*"]
         }
       }
     }
