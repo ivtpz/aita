@@ -1,4 +1,5 @@
 /* global document */
+/* eslint-disable import/first */
 require('babel-polyfill');
 
 import React from 'react';
