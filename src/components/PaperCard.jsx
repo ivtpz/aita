@@ -1,6 +1,7 @@
 import React from 'react';
 import Radium from 'radium';
 import Categories from './Categories';
+import ExpandableText from './ExpandableText';
 import DownloadLink from './DownloadLink';
 import colors from '../theme/colors';
 
@@ -19,15 +20,15 @@ const styles = {
     backgroundColor: colors.PrimaryBright,
     borderRadius: '4px 4px 0px 0px',
     color: 'white',
-    fontSize: '1.7em',
+    fontSize: '1.4em',
     padding: 4
   },
   body: {
     backgroundColor: 'white',
-    padding: '8px 0 0 8px'
+    padding: 8
   },
   author: {
-    fontSize: '1.3em',
+    fontSize: '1.1em',
     borderBottom: `1px solid ${colors.NeutralDark}`,
     display: 'inline',
     color: colors.PrimaryDark,
@@ -95,9 +96,10 @@ const PaperCard = ({
         <div style={publishedDate} >{published.slice(0, 10)}</div>
         <Categories
           primary={_term}
-          other={category.filter(cat => cat._term !== _term)}
+          other={category.length && category.filter(cat => cat._term !== _term)}
+          total={category.length || 1}
         />
-        <div style={mainText} >{summary}</div>
+        <ExpandableText custStyle={mainText} text={summary} />
       </div>
       <div style={foot}>
         {link && link.map((l, i) =>
