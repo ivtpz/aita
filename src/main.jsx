@@ -4,10 +4,13 @@ require('babel-polyfill');
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import { Provider } from 'react-redux';
 import { Router, Route, browserHistory } from 'react-router';
 import store from './store/storeConfig';
 import App from './components/App';
+
+injectTapEventPlugin();
 
 const Root = ({ appStore }) => (
   <Provider store={appStore}>
