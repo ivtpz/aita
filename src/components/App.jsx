@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Radium, { StyleRoot } from 'radium';
 // Actions
 import { initializeLock, showAuthLock } from '../actions/auth';
 import { setSearchQuery, searchArxiv } from '../actions/arxiv';
@@ -8,14 +9,15 @@ import SearchResultsList from './SearchResultsList';
 import SearchField from './SearchField';
 import Menu from './Menu';
 
-const main = {
-  display: 'flex',
-  flexDirection: 'column'
-};
-
-const searchStyle = {
-  alignSelf: 'flex-end',
-  marginTop: 10
+const styles = {
+  main: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  search: {
+    alignSelf: 'flex-end',
+    marginTop: 10
+  }
 };
 
 class App extends Component {
@@ -34,24 +36,26 @@ class App extends Component {
       }
     } = this.props;
     return (
-    <div style={main}>
-      <Menu
-        leftLinks={[
-          { text: 'References', action: () => '/saved' },
-          { text: 'Recommendations', action: () => '/recommend' }
-        ]}
-        rightLinks={[{ text: 'Log in', action: openLock }]}
-        title='AITA'
-      />
-      <div style={searchStyle} >
-        <SearchField
-          onSearchInput={onSearchInput}
-          search={search}
-          filter={filter || 'Search...'}
-        />
-      </div>
-      <SearchResultsList />
-    </div>
+      <StyleRoot>
+        <div style={styles.main}>
+          <Menu
+            leftLinks={[
+              { text: 'References', action: () => '/saved' },
+              { text: 'Recommendations', action: () => '/recommend' }
+            ]}
+            rightLinks={[{ text: 'Log in', action: openLock }]}
+            title='AITA'
+          />
+          <div style={styles.search} >
+            <SearchField
+              onSearchInput={onSearchInput}
+              search={search}
+              filter={filter || 'Search...'}
+            />
+          </div>
+          <SearchResultsList />
+        </div>
+      </StyleRoot>
     );
   }
 }
@@ -70,4 +74,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(App);
+)(Radium(App));

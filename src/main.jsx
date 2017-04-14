@@ -11,7 +11,7 @@ import App from './components/App';
 const Root = ({ appStore }) => (
   <Provider store={appStore}>
     <Router history={browserHistory}>
-      <Route path='/' component={App} />
+      <Route path='/(:filter)' component={App} />
     </Router>
   </Provider>
 );
