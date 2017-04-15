@@ -5,6 +5,7 @@ import Radium from 'radium';
 const styles = {
   container: {
     display: 'flex',
+    flexWrap: 'wrap',
     paddingTop: 5
   },
   primary: {
