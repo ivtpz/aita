@@ -1,4 +1,12 @@
-import { put } from 'axios';
+/* eslint-disable import/first */
+require('babel-polyfill');
+
+import { put, get } from 'axios';
+import X2JS from 'x2js';
+
+const x2js = new X2JS();
+
+const url = 'http://export.arxiv.org/api/query';
 
 const addReference = refId => async (dispatch, getState) => {
   const { user } = getState();
@@ -38,13 +46,39 @@ const removeReference = refId => async (dispatch, getState) => {
   }
 };
 
-const receiveUserData = payload => ({
-  type: 'RECEIVE_USER_DATA',
-  payload
+const searchArxivById = idList => async (dispatch) => {
+  const { data } = await get(url, {
+    params: {
+      id_list: idList.join(','),
+      start: 0
+    }
+  });
+  let { feed: { entry } } = x2js.xml2js(data);
+  if (!Array.isArray(entry)) entry = [entry];
+  return dispatch({
+    type: 'RECEIVE_USER_DATA',
+    payload: {
+      referenceData: entry
+    }
+  });
+};
+
+const receiveUserData = payload => (dispatch) => {
+  dispatch(searchArxivById(payload.references));
+  dispatch({
+    type: 'RECEIVE_USER_DATA',
+    payload
+  });
+};
+
+const filterUserRefs = query => ({
+  type: 'FILTER_REFERENCES',
+  query
 });
 
 export {
   addReference,
   removeReference,
-  receiveUserData
+  receiveUserData,
+  filterUserRefs
 };
