@@ -58,19 +58,31 @@ const styles = {
     ':hover': {
       textShadow: `1.5px 1.5px 3px ${colors.PrimaryDark}`
     }
+  },
+  minus: {
+    color: 'red'
   }
 };
 
 const PaperCard = ({
   data: {
     id, published, title, summary,
-    author, link,
-    primary_category: { _term },
-    category
-  } }) => {
+    author, link, category,
+    primary_category: { _term }
+  },
+  addToUser,
+  removeFromUser,
+  references
+}) => {
   const authors = Array.isArray(author) ?
-  author.map((a, i) => (i === author.length - 1 ? a.name : `${a.name},`)) :
+  author.slice(0, 10).map((a, i) => (i === author.length - 1 ? a.name : `${a.name},`)) :
   [author.name];
+  if (author.length > 10) authors.push('et al.');
+
+  const refId = id.split('/').pop();
+  const added = Array.isArray(references) ?
+    references.includes(refId) :
+    false;
 
   const {
     card, heading, body, foot, icon, mainText, publishedDate
@@ -79,24 +91,33 @@ const PaperCard = ({
   return (
     <div
       ref='card'
-      key={`card${id}`}
+      key={`card${refId}`}
       style={card}
     >
       <div style={heading}>{title}</div>
       <div style={body}>
         {authors.map(name =>
-          <div key={name + id} style={styles.author}>{name}</div>
+          <div
+            key={name + refId}
+            style={name !== 'et al.' ?
+              styles.author :
+              [styles.author, { borderBottom: 'none' }]
+            }
+          >{name}</div>
         )}
         <i
-          ref='icon'
-          key={2}
-          style={icon}
-          className='fa fa-plus-circle'
+          ref='plusIcon'
+          key={`plusIcon${refId}`}
+          style={added ? [icon, minus] : icon}
+          className={added ? 'fa fa-minus-circle' : 'fa fa-plus-circle'}
+          onTouchTap={added ? () => removeFromUser(refId) : () => addToUser(refId)}
         ></i>
         <div style={publishedDate} >{published.slice(0, 10)}</div>
         <Categories
           primary={_term}
-          other={category.length && category.filter(cat => cat._term !== _term)}
+          other={
+            category.length &&
+            category.filter(cat => cat._term !== _term)}
           total={category.length || 1}
         />
         <ExpandableText custStyle={mainText} text={summary} />
@@ -105,12 +126,25 @@ const PaperCard = ({
         {link && link.map((l, i) =>
           <DownloadLink
             type={l._type} link={l._href} // eslint-disable-line
-            id={i + id}
-            key={i + id} />
+            id={i + refId}
+            key={i + refId} />
         )}
       </div>
     </div>
   );
 };
 
-export default Radium(PaperCard);
+const mapStateToProps = state => ({
+  references: state.user.references
+});
+
+const mapDispatchToProps = dispatch => ({
+  addToUser: id => dispatch(addReference(id)),
+  removeFromUser: id => dispatch(removeReference(id))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Radium(PaperCard));
+

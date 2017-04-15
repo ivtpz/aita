@@ -14,6 +14,15 @@ const user = (state = initialState, action) => {
         references
       };
     }
+    case 'REMOVE_REFERENCE': {
+      const index = state.references.indexOf(action.refId);
+      const references = [...state.references];
+      references.splice(index, 1);
+      return {
+        ...state,
+        references
+      };
+    }
     default:
       return state;
   }

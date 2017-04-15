@@ -11,7 +11,8 @@ const findOrAddUser = async ({ query: { email } }, res) => {
   res.status(200).send(user);
 };
 
-const addReference = async ({ query: { refId, userId } }, res) => {
+const addReference = async (req, res) => {
+  const { body: { refId, userId } } = req;
   try {
     const user = await Users
       .findById(userId)
@@ -20,12 +21,28 @@ const addReference = async ({ query: { refId, userId } }, res) => {
     await user.save();
     res.status(200).send(`Added ${refId}`);
   } catch (err) {
-    res.status(404).send('User not found');
+    res.status(400).send('User not found');
+  }
+};
+
+const removeReference = async (req, res) => {
+  const { body: { refId, userId } } = req;
+  try {
+    const user = await Users
+      .findById(userId)
+      .exec();
+    const i = user.references.indexOf(refId);
+    user.references.splice(i, 1);
+    await user.save();
+    res.status(200).send(`Removed ${refId}`);
+  } catch (err) {
+    res.status(400).send('User not found');
   }
 };
 
 export {
   findOrAddUser,
   addReference,
+  removeReference,
   addUser
 };
