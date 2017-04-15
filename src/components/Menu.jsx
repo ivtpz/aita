@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { browserHistory, Link } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Radium from 'radium';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import MenuLink from './MenuLink';
 import colors from '../theme/colors';
+
+import { showAuthLock } from '../actions/auth';
+import { closeDrawer, toggleDrawer, setDrawerState } from '../actions/drawer';
 
 const styles = {
   menu: {
@@ -17,8 +22,9 @@ const styles = {
   title: {
     fontSize: '4em',
     fontWeight: 'bolder',
-    flex: '1 1 0',
+    flex: '1 1 0px',
     textAlign: 'center',
+    textDecoration: 'none',
     color: colors.PrimaryBright
   },
   leftLinkContainer: {
@@ -39,14 +45,6 @@ const styles = {
       display: 'none'
     }
   },
-  rightLinkContainer: {
-    display: 'flex',
-    flex: '1 1 0px',
-    justifyContent: 'flex-end',
-    '@media (max-width: 925px)': {
-      display: 'none'
-    }
-  },
   placeHolder: {
     flex: '1 1 0px',
     '@media (min-width: 925px)': {
@@ -55,22 +53,27 @@ const styles = {
   }
 };
 
+styles.rightLinkContainer = {
+  ...styles.leftLinkContainer,
+  justifyContent: 'flex-end'
+};
+
 // TODO: add a MUI theme
 
 class Menu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      open: false
-    };
-  }
 
-  handleToggle = () => this.setState({ open: !this.state.open });
-
-  handleClose = () => this.setState({ open: false });
+  handleAction = action => (typeof action === 'string' ?
+      browserHistory.push(action) :
+      action());
 
   render() {
-    const { leftLinks, title, rightLinks } = this.props;
+    const leftLinks = [
+      { text: 'References', action: '/references' },
+      { text: 'Recommendations', action: '/' }
+    ];
+    const rightLinks = [{ text: 'Log in', action: this.props.openLock }];
+    const title = 'AITA';
+    const { toggle, open, setDrawer } = this.props;
     return (
       <div style={styles.menu}>
         <div
@@ -89,22 +92,27 @@ class Menu extends Component {
           key={2}
           className='fa fa-bars'
           style={styles.menuIcon}
-          onClick={this.handleToggle}
+          onClick={toggle}
         >
         <MuiThemeProvider>
           <Drawer
             docked={false}
             width={200}
-            open={this.state.open}
-            onRequestChagne={open => this.setState({ open })}
+            open={open}
+            onRequestChagne={setDrawer}
           >
             {leftLinks.concat(rightLinks).map(l =>
-              <MenuItem onTouchTap={this.handleClose}>{l.text}</MenuItem>
+              <MenuItem
+                onTouchTap={() => this.handleAction(l.action)}
+                key={l.text}>
+                {l.text}</MenuItem>
             )}
           </Drawer>
         </MuiThemeProvider>
         </div>
-        <div style={styles.title}>{title}</div>
+        <Link to='/' style={styles.title}>
+          {title}
+        </Link>
         <div style={styles.rightLinkContainer}>
           {rightLinks.map((link, i) =>
             <MenuLink {...link}
@@ -119,4 +127,16 @@ class Menu extends Component {
   }
 }
 
-export default Radium(Menu);
+const mapStateToProps = ({ drawer }) => ({ ...drawer });
+
+const mapDispatchToProps = dispatch => ({
+  openLock: refId => dispatch(showAuthLock(refId)),
+  close: () => dispatch(closeDrawer()),
+  toggle: () => dispatch(toggleDrawer()),
+  setDrawer: open => dispatch(setDrawerState(open))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Radium(Menu));
