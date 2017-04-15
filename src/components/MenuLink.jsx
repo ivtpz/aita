@@ -27,7 +27,7 @@ const styles = {
 const MenuLink = ({ action, text, last }) => (
   <div
     style={!last ? styles.link : [styles.link, styles.last]}
-    onClick={action}>
+    onTouchTap={action}>
     {text}
   </div>
 );

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Measure from 'react-measure';
 import Radium from 'radium';
 import colors from '../theme/colors';
 
@@ -18,10 +19,9 @@ const styles = {
       color: colors.Mint
     }
   },
-  transitionMaker(chars) {
+  transitionMaker(chars, width) {
     // WARNING: these need to change if font or size changes
-    // and may not work in all browsers
-    const charsPerLine = 85;
+    const charsPerLine = width / 7.2;
     const lineHeight = 19;
     const padding = 8 * 2;
     const error = 10;
@@ -48,7 +48,8 @@ class ExpandableText extends Component {
     super(props);
     this.state = {
       expanded: false,
-      display: 'hidden'
+      display: 'hidden',
+      width: 0
     };
   }
 
@@ -60,34 +61,39 @@ class ExpandableText extends Component {
   };
 
   render() {
+    const { display, expanded } = this.state;
     const { custStyle, text } = this.props;
-    styles.transitionMaker(text.length);
+    styles.transitionMaker(text.length, this.state.width);
     const open = 'fa fa-caret-down';
     const close = 'fa fa-caret-up';
     const openMsg = 'Show abstract';
     const closeMsg = 'Hide abstract';
     return (
-      <div style={styles.base}>
-        <div
-          style={[
-            custStyle,
-            styles[this.state.display]
-          ]}
-        >{text}
+      <Measure
+        onMeasure={({ width }) => this.setState({ width })}
+      >
+        <div style={styles.base}>
+          <div
+            style={[
+              custStyle,
+              styles[display]
+            ]}
+          >{text}
+          </div>
+          <div
+            style={styles.msg}
+            onTouchTap={this.toggleExpansion}
+            ref={`expand${text.slice(0, 15)}`}
+            key={`expand${text.slice(0, 15)}`}
+          >
+            <i
+              style={styles.icon}
+              className={expanded ? close : open}
+            ></i>
+            <span>{expanded ? closeMsg : openMsg}</span>
+          </div>
         </div>
-        <div
-          style={styles.msg}
-          onClick={this.toggleExpansion}
-          ref={`expand${text.slice(0, 15)}`}
-          key={`expand${text.slice(0, 15)}`}
-        >
-          <i
-            style={styles.icon}
-            className={this.state.expanded ? close : open}
-          ></i>
-          <span>{this.state.expanded ? closeMsg : openMsg}</span>
-        </div>
-      </div>
+      </Measure>
     );
   }
 }

@@ -29,7 +29,7 @@ const SearchField = ({ onSearchInput, search, filter }) => (
     <i
       style={searchIcon}
       className='fa fa-search'
-      onClick={search}
+      onTouchTap={search}
     ></i>
   </div>
 );

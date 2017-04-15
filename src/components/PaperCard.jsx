@@ -1,19 +1,34 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import Radium from 'radium';
 import Categories from './Categories';
 import ExpandableText from './ExpandableText';
 import DownloadLink from './DownloadLink';
 import colors from '../theme/colors';
 
+// Actions
+import { addReference, removeReference } from '../actions/user';
+
 const styles = {
   card: {
     border: `1px solid ${colors.PrimaryDark}`,
     borderRadius: 4,
-    marginTop: 20,
-    width: '85%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    margin: '20px 30px',
     boxShadow: `3px 3px 8px ${colors.NeutralDark}`,
     ':hover': {
       boxShadow: `4px 4px 10px ${colors.PrimaryDark}`
+    },
+    '@media (min-width: 480px)': {
+      margin: '20px 30px',
+      flex: '1 1 420px'
+    },
+    '@media (max-width: 480px)': {
+      width: 310,
+      margin: '20px 0px 20px 0px'
     }
   },
   heading: {
@@ -85,7 +100,8 @@ const PaperCard = ({
     false;
 
   const {
-    card, heading, body, foot, icon, mainText, publishedDate
+    card, heading, body, foot, icon,
+    mainText, publishedDate, minus
   } = styles;
 
   return (

@@ -99,7 +99,7 @@ class Menu extends Component {
             onRequestChagne={open => this.setState({ open })}
           >
             {leftLinks.concat(rightLinks).map(l =>
-              <MenuItem onClick={this.handleClose}>{l.text}</MenuItem>
+              <MenuItem onTouchTap={this.handleClose}>{l.text}</MenuItem>
             )}
           </Drawer>
         </MuiThemeProvider>
