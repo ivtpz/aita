@@ -25,6 +25,7 @@ const SearchField = ({ onSearchInput, search, filter }) => (
       style={inputStyle}
       placeholder={filter}
       onChange={onSearchInput}
+      onKeyPress={({ charCode }) => (charCode === 13) && search()}
     />
     <i
       style={searchIcon}
