@@ -1,19 +1,33 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PaperCard from './PaperCard';
+import Pagination from './Pagination';
+
+// Actions
+import { searchArxiv } from '../actions/arxiv';
 
 const styles = {
   base: {
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-around',
-    alignItems: 'center'
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'flex-start'
   }
 };
 
-const SearchResultsList = ({ searchResults }) => (
+const SearchResultsList = ({
+  searchResults, totalResults, page, setPage
+}) => (
   <div style={styles.base}>
-    {searchResults.length ? searchResults.map(result =>
+    <Pagination
+      total={totalResults}
+      page={page}
+      setPage={setPage}
+      perPage={10}
+    />
+    {searchResults.length ?
+    searchResults.map(result =>
       <PaperCard key={result.id} data={result} />
     ) : null}
   </div>
@@ -23,7 +37,9 @@ const mapStateToProps = ({ arxiv }) => ({
   ...arxiv
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  setPage: page => dispatch(searchArxiv(page))
+});
 
 export default connect(
   mapStateToProps,

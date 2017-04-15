@@ -1,5 +1,8 @@
 export default {
   feed: {
+    totalResults: {
+      toString: () => 10
+    },
     entry: [{
     "id": "http://arxiv.org/abs/1509.00164v1",
     "updated": "2015-09-01T07:36:12Z",

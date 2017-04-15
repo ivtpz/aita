@@ -11,26 +11,37 @@ const setSearchQuery = search => ({
   query: search
 });
 
-const setSearchResults = ({ feed: { entry } }) => ({
+const setSearchResults = ({ feed: { entry, totalResults } }) => ({
   type: 'SET_SEARCH_RESULTS',
-  entry
+  entry,
+  totalResults: totalResults.toString()
 });
 
-const searchArxiv = () => async (dispatch, getState) => {
+const setSearchPage = page => ({
+  type: 'SET_SEARCH_PAGE',
+  page
+});
+
+const searchArxiv = page => async (dispatch, getState) => {
   const { query } = getState().arxiv;
+  const start = page ? page * 10 : 0;
   // TODO: FILTER THE DUMMY DATA
   // console.log(dummyData)
   // return dispatch(setSearchResults(dummyData));
   // TODO: ENV VARS TO RETURN DUMMY OR REAL DATA
   const { data } = await get(url, {
     params: {
-      search_query: `all:${query}`
+      search_query: `all:${query}`,
+      start,
+      max_results: 10
     }
   });
+  dispatch(setSearchPage(page || 1));
   return dispatch(setSearchResults(x2js.xml2js(data)));
 };
 
 export {
   setSearchQuery,
-  searchArxiv
+  searchArxiv,
+  setSearchPage
 };
