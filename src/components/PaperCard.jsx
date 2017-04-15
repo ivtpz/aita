@@ -17,7 +17,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    margin: '20px 30px',
+    margin: '20px 20px',
     boxShadow: `3px 3px 8px ${colors.NeutralDark}`,
     ':hover': {
       boxShadow: `4px 4px 10px ${colors.PrimaryDark}`
@@ -27,7 +27,7 @@ const styles = {
       flex: '1 1 420px'
     },
     '@media (max-width: 480px)': {
-      width: 310,
+      width: '85%',
       margin: '20px 0px 20px 0px'
     }
   },
@@ -87,17 +87,17 @@ const PaperCard = ({
   },
   addToUser,
   removeFromUser,
-  references
+  references,
+  width
 }) => {
   const authors = Array.isArray(author) ?
   author.slice(0, 10).map((a, i) => (i === author.length - 1 ? a.name : `${a.name},`)) :
   [author.name];
   if (author.length > 10) authors.push('et al.');
 
-  const refId = id.split('/').pop();
+  const refId = id.split('abs/').pop();
   const added = Array.isArray(references) ?
-    references.includes(refId) :
-    false;
+    references.includes(refId) : false;
 
   const {
     card, heading, body, foot, icon,
@@ -136,7 +136,10 @@ const PaperCard = ({
             category.filter(cat => cat._term !== _term)}
           total={category.length || 1}
         />
-        <ExpandableText custStyle={mainText} text={summary} />
+        <ExpandableText
+          custStyle={mainText}
+          text={summary}
+          width={width} />
       </div>
       <div style={foot}>
         {link && link.map((l, i) =>
