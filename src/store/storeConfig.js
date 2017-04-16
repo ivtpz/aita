@@ -4,7 +4,9 @@ import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers/index';
 
-const loggerMiddleware = createLogger();
+const loggerMiddleware = createLogger({
+  predicate: (_, action) => action.type !== 'SET_SCROLL_LOCATION'
+});
 
 /* eslint-disable no-underscore-dangle */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
