@@ -24,6 +24,12 @@ const setSearchPage = page => ({
 
 const searchArxiv = page => async (dispatch, getState) => {
   const { query } = getState().arxiv;
+  let formattedQ;
+  if (query && query.includes(',')) {
+    formattedQ = query.split(',').join(' ');
+  } else if (query) {
+    formattedQ = query.split(' ').join(' AND ');
+  }
   const start = page ? page * 10 : 0;
   // TODO: FILTER THE DUMMY DATA
   // console.log(dummyData)
@@ -31,7 +37,7 @@ const searchArxiv = page => async (dispatch, getState) => {
   // TODO: ENV VARS TO RETURN DUMMY OR REAL DATA
   const { data } = await get(url, {
     params: {
-      search_query: `all:${query}`,
+      search_query: `all:${formattedQ}`,
       start,
       max_results: 10
     }
