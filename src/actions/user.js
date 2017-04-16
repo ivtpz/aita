@@ -8,7 +8,7 @@ const x2js = new X2JS();
 
 const url = 'http://export.arxiv.org/api/query';
 
-const addReference = refId => async (dispatch, getState) => {
+const addReference = (refId, data) => async (dispatch, getState) => {
   const { user } = getState();
   try {
     await put('/user/add', {
@@ -17,7 +17,8 @@ const addReference = refId => async (dispatch, getState) => {
     });
     return dispatch({
       type: 'ADD_REFERENCE',
-      refId
+      refId,
+      data
     });
   } catch (errorMsg) {
     return dispatch({
@@ -73,12 +74,17 @@ const receiveUserData = payload => (dispatch) => {
 
 const filterUserRefs = query => ({
   type: 'FILTER_REFERENCES',
-  query
+  query: query.toLowerCase()
+});
+
+const makeUserRefsVisible = () => ({
+  type: 'MAKE_ALL_REFS_VISIBLE'
 });
 
 export {
   addReference,
   removeReference,
   receiveUserData,
-  filterUserRefs
+  filterUserRefs,
+  makeUserRefsVisible
 };
