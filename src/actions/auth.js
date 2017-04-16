@@ -15,22 +15,38 @@ const displayError = error => ({
   error
 });
 
+const login = () => ({ type: 'LOG_IN' });
+
+const logout = () => {
+  localStorage.removeItem('login_id_token');
+  return { type: 'LOG_OUT' };
+};
+
+const loadUserInfo = (dispatch, idToken, setToken = false) => {
+  lock.getProfile(idToken, async (err, { email }) => {
+    if (err) {
+      return dispatch(displayError(err));
+    }
+    if (setToken) localStorage.setItem('login_id_token', idToken);
+    const user = await get('/user', {
+      params: { email }
+    });
+    dispatch(login());
+    return dispatch(receiveUserData({
+      ...user.data,
+      idToken
+    }));
+  });
+};
+
 const initializeLock = () => (dispatch) => {
+  const id = localStorage.getItem('login_id_token');
+  if (id) {
+    loadUserInfo(dispatch, id);
+  }
   lock.on('authenticated', ({ idToken }) => {
     // dispatch({ type: 'AUTH_LOCK_HIDDEN' });
-    lock.getProfile(idToken, async (err, { email }) => {
-      if (err) {
-        return dispatch(displayError(err));
-      }
-      localStorage.setItem('login_id_token', idToken);
-      const user = await get('/user', {
-        params: { email }
-      });
-      return dispatch(receiveUserData({
-        ...user.data,
-        idToken
-      }));
-    });
+    loadUserInfo(dispatch, idToken, true);
   });
   lock.on('hide', () => dispatch({ type: 'AUTH_LOCK_HIDDEN' }));
   dispatch({ type: 'AUTH_LOCK_INITIALIZED' });
@@ -44,5 +60,6 @@ const showAuthLock = () => (dispatch) => {
 
 export {
   showAuthLock,
-  initializeLock
+  initializeLock,
+  logout
 };
