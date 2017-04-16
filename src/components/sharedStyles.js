@@ -1,18 +1,28 @@
 const main = {
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  paddingTop: 100
 };
+
 const searchBox = {
   alignSelf: 'flex-end',
-  marginTop: 10,
-  marginRight: 20,
+  marginRight: 30,
   '@media (max-width: 480px)': {
     marginRight: 0,
     alignSelf: 'center'
   }
 };
 
+const resultsContainer = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'flex-start'
+};
+
 export {
   main,
-  searchBox
+  searchBox,
+  resultsContainer
 };

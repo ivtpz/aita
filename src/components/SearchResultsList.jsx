@@ -1,21 +1,13 @@
 import React from 'react';
 import PaperCard from './PaperCard';
 import Pagination from './Pagination';
+import { resultsContainer } from './sharedStyles';
 
-const styles = {
-  base: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start'
-  }
-};
 
 const SearchResultsList = ({
   searchResults, totalResults, page, setPage
 }) => (
-  <div style={styles.base}>
+  <div style={resultsContainer}>
     <Pagination
       total={totalResults}
       page={page}
