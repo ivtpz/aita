@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Radium from 'radium';
-import { main, searchBox } from './sharedStyles';
+import { main, searchBox, resultsContainer } from './sharedStyles';
 // Actions
-import filterUserRefs from '../actions/user';
+import { filterUserRefs, makeUserRefsVisible } from '../actions/user';
 // Components
 import PaperCard from './PaperCard';
 import SearchField from './SearchField';
 
-const styles = {
-  base: {}
-};
-
-// TODO: load in references from IDs
 
 class UserReferences extends Component {
+
+  componentDidMount() {
+    this.props.makeVisible();
+  }
 
   render() {
     const { references, filterReferences } = this.props;
@@ -23,9 +22,14 @@ class UserReferences extends Component {
         <div style={searchBox}>
           <SearchField
             onSearchInput={filterReferences}
+            filter={'filter...'}
           />
         </div>
-        {references && references.length && references.map(r => <div>{r}</div>)}
+        <div style={resultsContainer}>
+          {references && references.map(result =>
+            <PaperCard key={result.id} data={result} />
+          )}
+        </div>
       </div>
     );
   }
@@ -36,7 +40,8 @@ const mapStateToProps = ({
 }) => ({ references: visibleReferences });
 
 const mapDispatchToProps = dispatch => ({
-  filterReferences: q => dispatch(filterUserRefs(q))
+  filterReferences: e => dispatch(filterUserRefs(e.target.value)),
+  makeVisible: () => dispatch(makeUserRefsVisible())
 });
 
 export default connect(
