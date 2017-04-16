@@ -1,6 +1,6 @@
 import React from 'react';
 import Radium from 'radium';
-import colors from '../theme/colors';
+import { colors } from '../theme/colors';
 
 const styles = {
   base: {
