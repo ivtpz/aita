@@ -19,7 +19,9 @@ const Root = ({ appStore }) => (
     <Router history={browserHistory}>
       <Route path='/' component={App}>
         <IndexRoute component={SearchPage} />
-        <Route path='/references' component={UserReferences} />
+        <Route
+          path='/references'
+          component={UserReferences} />
       </Route>
     </Router>
   </Provider>
