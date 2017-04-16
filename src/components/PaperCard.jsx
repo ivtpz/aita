@@ -5,7 +5,7 @@ import Radium from 'radium';
 import Categories from './Categories';
 import ExpandableText from './ExpandableText';
 import DownloadLink from './DownloadLink';
-import colors from '../theme/colors';
+import { colors } from '../theme/colors';
 
 // Actions
 import { addReference, removeReference } from '../actions/user';
@@ -18,6 +18,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'space-between',
     margin: '20px 20px',
+    maxWidth: 750,
     boxShadow: `3px 3px 8px ${colors.NeutralDark}`,
     ':hover': {
       boxShadow: `4px 4px 10px ${colors.PrimaryDark}`
@@ -80,16 +81,17 @@ const styles = {
 };
 
 const PaperCard = ({
-  data: {
-    id, published, title, summary,
-    author, link, category,
-    primary_category: { _term }
-  },
+  data,
   addToUser,
   removeFromUser,
   references,
   width
 }) => {
+  const {
+    id, published, title, summary,
+    author, link, category,
+    primary_category: { _term }
+  } = data;
   const authors = Array.isArray(author) ?
   author.slice(0, 10).map((a, i) => (i === author.length - 1 ? a.name : `${a.name},`)) :
   [author.name];
@@ -126,7 +128,7 @@ const PaperCard = ({
           key={`plusIcon${refId}`}
           style={added ? [icon, minus] : icon}
           className={added ? 'fa fa-minus-circle' : 'fa fa-plus-circle'}
-          onTouchTap={added ? () => removeFromUser(refId) : () => addToUser(refId)}
+          onTouchTap={added ? () => removeFromUser(refId) : () => addToUser(refId, data)}
         ></i>
         <div style={publishedDate} >{published.slice(0, 10)}</div>
         <Categories
@@ -158,7 +160,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  addToUser: id => dispatch(addReference(id)),
+  addToUser: (id, data) => dispatch(addReference(id, data)),
   removeFromUser: id => dispatch(removeReference(id))
 });
 

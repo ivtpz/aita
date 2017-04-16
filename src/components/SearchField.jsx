@@ -1,5 +1,5 @@
 import React from 'react';
-import colors from '../theme/colors';
+import { colors } from '../theme/colors';
 
 const inputStyle = {
   ariaHidden: true,

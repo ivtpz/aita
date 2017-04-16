@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Measure from 'react-measure';
 import Radium from 'radium';
-import colors from '../theme/colors';
+import { colors } from '../theme/colors';
 
 const range = function (start, end) {
   const a = [];
