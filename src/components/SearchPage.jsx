@@ -12,15 +12,14 @@ const SearchPage = ({
   onSearchInput,
   search,
   arxiv,
-  setPage,
-  params: { filter }
+  setPage
 }) => (
   <div style={main}>
     <div style={searchBox} >
       <SearchField
         onSearchInput={onSearchInput}
         search={search}
-        filter={filter || 'Search...'}
+        filter={arxiv.query || 'Search...'}
       />
     </div>
     <SearchResultsList
