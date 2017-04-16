@@ -25,6 +25,16 @@ const auth = (state = initialState, action) => {
         ...state,
         error: action.error
       };
+    case 'LOG_IN':
+      return {
+        ...state,
+        loggedIn: true
+      };
+    case 'LOG_OUT':
+      return {
+        ...state,
+        loggedIn: false
+      };
     default:
       return state;
   }
