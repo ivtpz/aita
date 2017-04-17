@@ -7,6 +7,10 @@ const main = {
 const searchBox = {
   alignSelf: 'flex-end',
   marginRight: 30,
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  justifyContent: 'center',
   '@media (max-width: 480px)': {
     marginRight: 0,
     alignSelf: 'center'
