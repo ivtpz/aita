@@ -6,9 +6,19 @@ const x2js = new X2JS();
 
 const url = 'http://export.arxiv.org/api/query';
 
-const setSearchQuery = search => ({
-  type: 'SET_ARXIV_SEARCH',
-  query: search
+const setSearchQuery = query => ({
+  type: 'SET_ARXIV_QUERY',
+  payload: { query }
+});
+
+const setSearchCategory = category => ({
+  type: 'SET_ARXIV_CATEGORY',
+  payload: { category }
+});
+
+const setSearchSort = sortBy => ({
+  type: 'SET_ARXIV_SORTBY',
+  payload: { sortBy }
 });
 
 const setSearchResults = ({ feed: { entry, totalResults } }) => ({
@@ -19,11 +29,11 @@ const setSearchResults = ({ feed: { entry, totalResults } }) => ({
 
 const setSearchPage = page => ({
   type: 'SET_SEARCH_PAGE',
-  page
+  payload: { page }
 });
 
 const searchArxiv = page => async (dispatch, getState) => {
-  const { query } = getState().arxiv;
+  const { query, category, sortBy, sortOrder } = getState().arxiv;
   let formattedQ;
   if (query && query.includes(',')) {
     formattedQ = query.split(',').join(' ');
@@ -31,17 +41,18 @@ const searchArxiv = page => async (dispatch, getState) => {
     formattedQ = query.split(' ').join(' AND ');
   }
   const start = page ? page * 10 : 0;
+  const params = {
+    search_query: `${category.arxivValue}:${formattedQ}`,
+    start,
+    sortBy: sortBy.arxivValue,
+    sortOrder,
+    max_results: 10
+  };
   // TODO: FILTER THE DUMMY DATA
   // console.log(dummyData)
   // return dispatch(setSearchResults(dummyData));
   // TODO: ENV VARS TO RETURN DUMMY OR REAL DATA
-  const { data } = await get(url, {
-    params: {
-      search_query: `all:${formattedQ}`,
-      start,
-      max_results: 10
-    }
-  });
+  const { data } = await get(url, { params });
   dispatch(setSearchPage(page || 1));
   return dispatch(setSearchResults(x2js.xml2js(data)));
 };
@@ -49,5 +60,7 @@ const searchArxiv = page => async (dispatch, getState) => {
 export {
   setSearchQuery,
   searchArxiv,
-  setSearchPage
+  setSearchPage,
+  setSearchCategory,
+  setSearchSort
 };
