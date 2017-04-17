@@ -13,13 +13,34 @@ import MenuLink from './MenuLink';
 import { colors, theme } from '../theme/colors';
 // Actions
 import { showAuthLock, logout } from '../actions/auth';
-import { closeDrawer, toggleDrawer, setDrawerState } from '../actions/drawer';
+import { closeDrawer, toggleDrawer, setDrawerState } from '../actions/materialUi';
+
+const icon = {
+  opacity: 1,
+  width: 40,
+  height: 40,
+  zIndex: 150,
+  visibility: 'visible',
+  transition: 'visibility 0.3s, opacity 0.2s linear'
+};
+
+const tablet = {
+  '@media (min-width: 1040px)': {
+    display: 'none'
+  }
+};
+
+const desktop = {
+  '@media (max-width: 1040px)': {
+    display: 'none'
+  }
+};
 
 const styles = {
   menu: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
+    alignItems: 'flex-end',
     borderBottom: '2px solid lightgrey',
     position: 'fixed',
     width: '100%',
@@ -30,6 +51,13 @@ const styles = {
   stickyMenu: {
     boxShadow: '0px 1px 5px 2px darkgrey'
   },
+  titleBlock: {
+    height: 76,
+    transition: 'height 0.2s ease-out'
+  },
+  titleBlockSmall: {
+    height: 50
+  },
   titleBase: {
     fontSize: '4em',
     fontWeight: 'bolder',
@@ -38,52 +66,29 @@ const styles = {
     textDecoration: 'none',
     color: colors.PrimaryBright,
     opacity: 1,
-    transition: 'transform 0.2s ease, opacity 0.2s ease'
-  },
-  titleFaded: {
-    transform: 'scale(0.8)',
-    opacity: 0.5
+    visibility: 'visible',
+    transition: 'visibility 0.3s, transform 0.3s ease, opacity 0.3s ease'
   },
   titleHidden: {
-    opacity: 0.2,
+    opacity: 0,
+    visibility: 'hidden',
     transform: 'scale(0.5)'
   },
   iconBase: {
-    opacity: 1,
-    width: 40,
-    height: 40,
-    zIndex: 150,
-    transition: 'transform 0.3s ease, opacity 0.3s ease',
-    '@media (max-width: 1040px)': {
-      marginRight: 20
-    }
-  },
-  iconFaded: {
-    opacity: 0.5,
-    transform: 'scale(1.3)',
-    position: 'absolute',
+    ...icon,
     top: 10,
-    left: '48%',
-    '@media (max-width: 1040px)': {
-      left: '92%'
-    }
+    left: '49%',
+    position: 'absolute',
+    ...desktop
   },
   iconHidden: {
-    transform: 'scale(1.1)',
-    opacity: 0.1,
-    position: 'absolute',
-    top: 15,
-    left: '48%',
-    '@media (max-width: 1040px)': {
-      left: '92%'
-    }
+    visibility: 'hidden',
+    opacity: 0
   },
   leftLinkContainer: {
     display: 'flex',
     flex: '1 1 0px',
-    '@media (max-width: 1040px)': {
-      display: 'none'
-    }
+    ...desktop
   },
   menuIcon: {
     fontSize: '2.4em',
@@ -92,9 +97,7 @@ const styles = {
     paddingRight: 20,
     color: colors.Mint,
     cursor: 'pointer',
-    '@media (min-width: 1040px)': {
-      display: 'none'
-    }
+    ...tablet
   },
   closeButton: {
     float: 'right',
@@ -106,9 +109,15 @@ const styles = {
   },
   placeHolder: {
     flex: '1 1 0px',
-    '@media (min-width: 1040px)': {
-      display: 'none'
-    }
+    alignSelf: 'center',
+    ...tablet
+  },
+  rightIcon: {
+    ...icon,
+    float: 'right',
+    marginRight: 15,
+    marginBottom: 4,
+    ...tablet
   }
 };
 
@@ -117,7 +126,7 @@ styles.rightLinkContainer = {
   justifyContent: 'flex-end'
 };
 
-const menuMovePoint = 25;
+const menuMovePoint = 15;
 
 // TODO: add a MUI theme
 
@@ -128,27 +137,29 @@ class Menu extends Component {
       action());
 
   getTitleBlock = (y, title) => {
-    const { titleBase, titleFaded, titleHidden, iconBase, iconFaded, iconHidden } = styles;
-    if (y < 10) {
-      return (<div style={titleBase}>{title}</div>);
-    } else if (y < 18) {
+    const { titleBlock, titleBlockSmall, titleBase, titleHidden, iconBase, iconHidden } = styles;
+    if (!y) {
       return (
-        <div>
-          <div style={[titleBase, titleFaded]}>{title}</div>
-          <div id='icon' style={[iconBase, iconHidden]}/>
-        </div>
-      );
-    } else if (y < menuMovePoint) {
-      return (
-        <div>
-          <div style={[titleBase, titleHidden]}>{title}</div>
-          <div id='icon' style={[iconBase, iconFaded]}/>
+        <div style={titleBlock}>
+          <div style={titleBase}>{title}</div>
         </div>
       );
     }
-    return (<div id='icon' style={iconBase}/>);
+    if (y < menuMovePoint) {
+      return (
+        <div style={titleBlock}>
+          <div style={titleBase}>{title}</div>
+          <div id='icon' style={[iconBase, iconHidden]}/>
+        </div>
+      );
+    }
+    return (
+      <div style={[titleBlock, titleBlockSmall]}>
+        <div style={[titleBase, titleHidden]}>{title}</div>
+        <div id='icon' style={iconBase}/>
+      </div>
+    );
   };
-
 
   render() {
     const leftLinks = [
@@ -199,7 +210,7 @@ class Menu extends Component {
           >
             <IconButton
               style={styles.closeButton}
-              iconStyle={{ fill: colors.Mint }}>
+              iconStyle={{ fill: colors.NeutralDark }}>
               <NavigationClose />
             </IconButton>
             {leftLinks.concat(rightLinks).map((l, i) =>
@@ -226,14 +237,16 @@ class Menu extends Component {
             />
           )}
         </div>
-        {scrollY < menuMovePoint && <div style={styles.placeHolder} />}
+        <div style={styles.placeHolder}>
+          <div id='iconRight' style={scrollY > menuMovePoint ? styles.rightIcon : [styles.rightIcon, styles.iconHidden]} />
+        </div>
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ drawer, windowReducer, auth }) => ({
-  ...drawer,
+const mapStateToProps = ({ materialUi, windowReducer, auth }) => ({
+  ...materialUi.drawer,
   ...windowReducer,
   loggedIn: auth.loggedIn
 });
