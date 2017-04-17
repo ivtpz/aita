@@ -15,7 +15,7 @@ const SearchResultsList = ({
       perPage={10}
       name={'top'}
     />
-    {searchResults.length ?
+    {searchResults && searchResults.length ?
     searchResults.map(result =>
       <PaperCard key={result.id} data={result} />
     ) : null}
