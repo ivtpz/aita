@@ -11,7 +11,9 @@ export const colors = {
   Mint: '#36bc98',
   transMint: 'rgba(54, 188, 152, 0.4)',
   transAccent: 'rgba(253, 241, 216, 0.7)',
-  transWhite: 'rgba(255, 255, 255, 0.7)'
+  transCoral: 'rgba(249, 115, 108, 0.1)',
+  transWhite: 'rgba(255, 255, 255, 0.7)',
+  transgrey: 'rgba(225, 221, 222, 0.4)'
 };
 export const theme = {
   spacing: Spacing,
