@@ -27,6 +27,7 @@ const styles = {
     borderColor: colors.Mint,
     cursor: 'pointer',
     flex: '1 1 30px',
+    maxWidth: 60,
     ':hover': {
       color: colors.PrimaryBright
     }
