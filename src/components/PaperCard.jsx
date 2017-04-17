@@ -1,18 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
+import IconButton from 'material-ui/IconButton';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Radium from 'radium';
+
 import Categories from './Categories';
 import ExpandableText from './ExpandableText';
 import DownloadLink from './DownloadLink';
-import { colors } from '../theme/colors';
+import { colors, theme } from '../theme/colors';
 
 // Actions
 import { addReference, removeReference } from '../actions/user';
 
 const styles = {
   card: {
-    border: `1px solid ${colors.PrimaryDark}`,
+    border: `1px solid ${colors.NeutralDark}`,
     borderRadius: 4,
     display: 'flex',
     flexDirection: 'column',
@@ -21,7 +24,8 @@ const styles = {
     maxWidth: 750,
     boxShadow: `3px 3px 8px ${colors.NeutralDark}`,
     ':hover': {
-      boxShadow: `4px 4px 10px ${colors.PrimaryDark}`
+      boxShadow: `4px 4px 10px ${colors.PrimaryDark}`,
+      border: `1px solid ${colors.PrimaryDark}`
     },
     '@media (min-width: 480px)': {
       margin: '20px 30px',
@@ -59,24 +63,24 @@ const styles = {
   },
   foot: {
     backgroundColor: colors.Accent,
-    // borderTop: `1px solid ${colors.NeutralDark}`,
     borderRadius: '0px 0px 4px 4px',
-    padding: '4px'
+    padding: 6
+  },
+  iconContainer: {
+    float: 'right'
   },
   icon: {
     color: colors.Mint,
     textShadow: `1px 1px 2px ${colors.NeutralDark}`,
     fontSize: 35,
     display: 'inline',
-    float: 'right',
-    marginRight: 15,
-    cursor: 'pointer',
-    ':hover': {
-      textShadow: `1.5px 1.5px 3px ${colors.PrimaryDark}`
-    }
+    cursor: 'pointer'
+  },
+  tooltip: {
+    fontSize: '16px'
   },
   minus: {
-    color: 'red'
+    color: 'crimson'
   }
 };
 
@@ -102,8 +106,8 @@ const PaperCard = ({
     references.includes(refId) : false;
 
   const {
-    card, heading, body, foot, icon,
-    mainText, publishedDate, minus
+    card, heading, body, foot, icon, tooltip,
+    mainText, publishedDate, minus, iconContainer
   } = styles;
 
   return (
@@ -123,13 +127,19 @@ const PaperCard = ({
             }
           >{name}</div>
         )}
-        <i
-          ref='plusIcon'
-          key={`plusIcon${refId}`}
-          style={added ? [icon, minus] : icon}
-          className={added ? 'fa fa-minus-circle' : 'fa fa-plus-circle'}
-          onTouchTap={added ? () => removeFromUser(refId) : () => addToUser(refId, data)}
-        ></i>
+        <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
+          <IconButton
+            ref='plusIcon'
+            key={`plusIcon${refId}`}
+            style={iconContainer}
+            tooltip={added ? 'Remove Reference' : 'Save Reference'}
+            tooltipStyles={tooltip}
+            tooltipPosition='top-center'
+            iconStyle={added ? { ...icon, ...minus } : icon}
+            iconClassName={added ? 'fa fa-minus-circle' : 'fa fa-plus-circle'}
+            onTouchTap={added ? () => removeFromUser(refId) : () => addToUser(refId, data)}
+          />
+        </MuiThemeProvider>
         <div style={publishedDate} >{published.slice(0, 10)}</div>
         <Categories
           primary={_term}
