@@ -1,17 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import IconButton from 'material-ui/IconButton';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Radium from 'radium';
 
 import Categories from './Categories';
 import ExpandableText from './ExpandableText';
 import DownloadLink from './DownloadLink';
-import { colors, theme } from '../theme/colors';
+import { colors } from '../theme/colors';
 
 // Actions
 import { addReference, removeReference } from '../actions/user';
+import { showSnackBar, hideSnackBar } from '../actions/materialUi';
 
 const styles = {
   card: {
@@ -127,19 +126,18 @@ const PaperCard = ({
             }
           >{name}</div>
         )}
-        <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-          <IconButton
-            ref='plusIcon'
-            key={`plusIcon${refId}`}
-            style={iconContainer}
-            tooltip={added ? 'Remove Reference' : 'Save Reference'}
-            tooltipStyles={tooltip}
-            tooltipPosition='top-center'
-            iconStyle={added ? { ...icon, ...minus } : icon}
-            iconClassName={added ? 'fa fa-minus-circle' : 'fa fa-plus-circle'}
-            onTouchTap={added ? () => removeFromUser(refId) : () => addToUser(refId, data)}
-          />
-        </MuiThemeProvider>
+        <IconButton
+          ref='plusIcon'
+          key={`plusIcon${refId}`}
+          style={iconContainer}
+          tooltip={added ? 'Remove Reference' : 'Save Reference'}
+          tooltipStyles={tooltip}
+          tooltipPosition='top-center'
+          iconStyle={added ? { ...icon, ...minus } : icon}
+          hoveredStyle={{ top: '-2px' }}
+          iconClassName={added ? 'fa fa-minus-circle' : 'fa fa-plus-circle'}
+          onTouchTap={() => (added ? removeFromUser(refId) : addToUser(refId, data))}
+        />
         <div style={publishedDate} >{published.slice(0, 10)}</div>
         <Categories
           primary={_term}
@@ -171,7 +169,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   addToUser: (id, data) => dispatch(addReference(id, data)),
-  removeFromUser: id => dispatch(removeReference(id))
+  removeFromUser: id => dispatch(removeReference(id)),
+  confirmAdd: () => dispatch(showSnackBar('Reference added to your saved list')),
+  confirmRemove: () => dispatch(showSnackBar('Reference removed from your saved list')),
 });
 
 export default connect(

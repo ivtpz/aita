@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { browserHistory, Link } from 'react-router';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import IconButton from 'material-ui/IconButton';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 import Radium from 'radium';
@@ -10,7 +8,7 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
 import MenuLink from './MenuLink';
-import { colors, theme } from '../theme/colors';
+import { colors } from '../theme/colors';
 // Actions
 import { showAuthLock, logout } from '../actions/auth';
 import { closeDrawer, toggleDrawer, setDrawerState } from '../actions/materialUi';
@@ -88,13 +86,13 @@ const styles = {
   leftLinkContainer: {
     display: 'flex',
     flex: '1 1 0px',
+    marginLeft: 6,
     ...desktop
   },
   menuIcon: {
     fontSize: '2.4em',
     flex: '1 1 0px',
     alignSelf: 'center',
-    paddingRight: 20,
     color: colors.Mint,
     cursor: 'pointer',
     ...tablet
@@ -110,12 +108,13 @@ const styles = {
   placeHolder: {
     flex: '1 1 0px',
     alignSelf: 'center',
+    marginRight: 12,
     ...tablet
   },
   rightIcon: {
     ...icon,
     float: 'right',
-    marginRight: 15,
+    marginRight: 4,
     marginBottom: 4,
     ...tablet
   }
@@ -123,7 +122,8 @@ const styles = {
 
 styles.rightLinkContainer = {
   ...styles.leftLinkContainer,
-  justifyContent: 'flex-end'
+  justifyContent: 'flex-end',
+  marginRight: 6
 };
 
 const menuMovePoint = 15;
@@ -201,29 +201,27 @@ class Menu extends Component {
           style={styles.menuIcon}
           onClick={toggle}
         >
-        <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-          <Drawer
-            docked={false}
-            width={200}
-            open={open}
-            onRequestChagne={setDrawer}
-          >
-            <IconButton
-              style={styles.closeButton}
-              iconStyle={{ fill: colors.NeutralDark }}>
-              <NavigationClose />
-            </IconButton>
-            {leftLinks.concat(rightLinks).map((l, i) =>
-              <div>
-                <MenuItem
-                  onTouchTap={() => this.handleAction(l.action)}
-                  key={l.text}>
-                  {l.text}</MenuItem>
-                {i === 2 && <Divider />}
-              </div>
-            )}
-          </Drawer>
-        </MuiThemeProvider>
+        <Drawer
+          docked={false}
+          width={200}
+          open={open}
+          onRequestChagne={setDrawer}
+        >
+          <IconButton
+            style={styles.closeButton}
+            iconStyle={{ fill: colors.NeutralDark }}>
+            <NavigationClose />
+          </IconButton>
+          {leftLinks.concat(rightLinks).map((l, i) =>
+            <div>
+              <MenuItem
+                onTouchTap={() => this.handleAction(l.action)}
+                key={l.text}>
+                {l.text}</MenuItem>
+              {i === 2 && <Divider />}
+            </div>
+          )}
+        </Drawer>
         </div>
         <Link to='/' style={{ textDecoration: 'none' }}>
           {this.getTitleBlock(scrollY, title)}
