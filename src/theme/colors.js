@@ -13,7 +13,8 @@ export const colors = {
   transAccent: 'rgba(253, 241, 216, 0.7)',
   transCoral: 'rgba(249, 115, 108, 0.1)',
   transWhite: 'rgba(255, 255, 255, 0.7)',
-  transgrey: 'rgba(225, 221, 222, 0.4)'
+  transgrey: 'rgba(225, 221, 222, 0.4)',
+  transDarkGrey: 'rgba(110, 106, 107, 0.8)'
 };
 export const theme = {
   spacing: Spacing,
@@ -30,6 +31,10 @@ export const theme = {
     canvasColor: white,
     borderColor: colors.NeutralDark,
     pickerHeaderColor: colors.Accent
+  },
+  snackbar: {
+    textColor: white,
+    actionColor: colors.Mint
   }
 };
 

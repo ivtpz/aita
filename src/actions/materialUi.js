@@ -20,9 +20,17 @@ const closePopover = popoverName => ({
 
 const setDrawerState = open => ({
   type: 'SET_DRAWER_STATE',
-  payload: {
-    open
-  }
+  payload: { open }
+});
+
+const showSnackBar = (message, options) => ({
+  type: 'SHOW_SNACKBAR',
+  payload: { message, open: true, ...options }
+});
+
+const hideSnackBar = () => ({
+  type: 'HIDE_SNACKBAR',
+  payload: { message: '', open: false }
 });
 
 export {
@@ -30,5 +38,7 @@ export {
   toggleDrawer,
   setDrawerState,
   openPopover,
-  closePopover
+  closePopover,
+  showSnackBar,
+  hideSnackBar
 };
