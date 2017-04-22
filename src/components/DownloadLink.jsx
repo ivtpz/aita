@@ -1,5 +1,6 @@
 import React from 'react';
 import Radium from 'radium';
+import IconButton from 'material-ui/IconButton';
 import { colors } from '../theme/colors';
 
 const styles = {
@@ -34,12 +35,16 @@ const DownloadLink = ({ type, link, id }) => {
         href={link}
         target='_blank'
         style={{ textDecoration: 'none' }}>
-        <i
+        <IconButton
           ref={`download${id}`}
           key={`download${id}`}
-          style={styles.base}
-          className={className}
-        ></i>
+          tooltip={'Download'}
+          tooltipStyles={{ fontSize: '16px' }}
+          style={{ padding: 5 }}
+          hoveredStyle={{ color: colors.Mint }}
+          iconStyle={styles.base}
+          iconClassName={className}
+        ></IconButton>
       </a>
     );
   }
