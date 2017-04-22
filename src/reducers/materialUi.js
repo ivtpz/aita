@@ -2,6 +2,10 @@ const initialState = {
   drawer: {
     open: false
   },
+  snackBar: {
+    open: false,
+    message: ''
+  },
   popOver: {}
 };
 
@@ -35,6 +39,15 @@ const materialUi = (state = initialState, action) => {
         ...state,
         popOver: {
           ...state.popOver,
+          ...action.payload
+        }
+      };
+    case 'SHOW_SNACKBAR':
+    case 'HIDE_SNACKBAR':
+      return {
+        ...state,
+        snackBar: {
+          ...state.snackBar,
           ...action.payload
         }
       };
