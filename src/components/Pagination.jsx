@@ -75,7 +75,8 @@ class Pagination extends Component {
     } else if (page < totalPages - (numOptions - 3)) {
       return [1, {
         text: '...',
-        num: Math.floor((1 + ((numOptions - 4) / 2)) / 2)
+        // TODO this is not picking the correct spot
+        num: Math.floor((1 + ((numOptions - 3) / 2)) / 2)
       }].concat(range(
         page - Math.floor((numOptions - 4) / 2),
         page + Math.floor((numOptions - 4) / 2)
