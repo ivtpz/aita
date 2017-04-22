@@ -4,14 +4,12 @@ import Radium from 'radium';
 import Popover, { PopoverAnimationVertical } from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { colors, theme } from '../theme/colors';
+import { colors } from '../theme/colors';
 
 // Actions
 import { closePopover, openPopover } from '../actions/materialUi';
 
-const border = `2px solid ${colors.Mint}`;
+const border = `3px solid ${colors.PrimaryBright}`;
 
 const styles = {
   searchOption: {
@@ -26,14 +24,15 @@ const styles = {
     marginLeft: 10,
     transition: 'all 0.2s ease',
     '@media (max-width: 480px)': {
-      fontSize: '17px'
+      fontSize: '17px',
+      minWidth: 150
     },
     ':hover': {
       backgroundColor: colors.transCoral
     }
   },
   selected: {
-    color: colors.Mint
+    color: colors.NeutralDark
   },
   lastStyle: {
     borderRight: border,
@@ -49,41 +48,39 @@ const component = (props) => {
   } = props;
   const { searchOption, selected, lastStyle } = styles;
   return (
-    <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-      <div>
-        <div
-          style={!last ? searchOption : [searchOption, lastStyle]}
-          onTouchTap={e => {
-            e.preventDefault();
-            open(name, e.currentTarget);
-          }}
-        >{label} <span style={selected}>{value}</span></div>
-        <Popover
-          open={props[name]}
-          anchorEl={anchor}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-          onRequestClose={() => close(name)}
-          animation={PopoverAnimationVertical}
-          useLayerForClickAway={true}
+    <div>
+      <div
+        style={!last ? searchOption : [searchOption, lastStyle]}
+        onTouchTap={e => {
+          e.preventDefault();
+          open(name, e.currentTarget);
+        }}
+      >{label} <span style={selected}>{value}</span></div>
+      <Popover
+        open={props[name]}
+        anchorEl={anchor}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+        onRequestClose={() => close(name)}
+        animation={PopoverAnimationVertical}
+        useLayerForClickAway={true}
+      >
+        <Menu
+          selectedMenuItemStyle={{ color: colors.PrimaryDark }}
+          value={value}
         >
-          <Menu
-            selectedMenuItemStyle={{ color: colors.PrimaryDark }}
-            value={value}
-          >
-            {options.map(o =>
-              <MenuItem
-                value={o.text}
-                primaryText={o.text}
-                onTouchTap={() => {
-                  onSelect(o);
-                  close(name);
-                }} />
-            )}
-          </Menu>
-        </Popover>
-      </div>
-    </MuiThemeProvider>
+          {options.map(o =>
+            <MenuItem
+              value={o.text}
+              primaryText={o.text}
+              onTouchTap={() => {
+                onSelect(o);
+                close(name);
+              }} />
+          )}
+        </Menu>
+      </Popover>
+    </div>
   );
 };
 

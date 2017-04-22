@@ -5,9 +5,8 @@ const main = {
 };
 
 const searchBox = {
-  alignSelf: 'flex-end',
-  marginRight: 30,
   display: 'flex',
+  flexDirection: 'column',
   flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'center',
