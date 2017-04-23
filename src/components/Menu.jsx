@@ -183,20 +183,18 @@ class Menu extends Component {
         style={scrollY < menuMovePoint ? styles.menu : [styles.menu, styles.stickyMenu]}
         id='menu-container'>
         <div
-          ref='leftlinks'
-          key={1}
+          ref='1.leftlinks'
           style={styles.leftLinkContainer}>
           {leftLinks.map((link, i) =>
             <MenuLink {...link}
-              key={i}
+              key={`${i}${link.text}expandedleft`}
               last={i === leftLinks.length - 1}
               active={link.action === location}
             />
           )}
         </div>
         <div
-          ref='menuIcon'
-          key={2}
+          ref='2.menuIcon'
           className='fa fa-bars'
           style={styles.menuIcon}
           onClick={toggle}
@@ -213,29 +211,29 @@ class Menu extends Component {
             <NavigationClose />
           </IconButton>
           {leftLinks.concat(rightLinks).map((l, i) =>
-            <div>
+            <div key = {`${i}${l.text}itemcontainer`}>
               <MenuItem
                 onTouchTap={() => this.handleAction(l.action)}
-                key={l.text}>
+                key={`${i}${l.text}drawer`}>
                 {l.text}</MenuItem>
               {i === 2 && <Divider />}
             </div>
           )}
         </Drawer>
         </div>
-        <Link to='/' style={{ textDecoration: 'none' }}>
+        <Link to='/' style={{ textDecoration: 'none' }} >
           {this.getTitleBlock(scrollY, title)}
         </Link>
-        <div style={styles.rightLinkContainer}>
+        <div style={styles.rightLinkContainer} >
           {rightLinks.map((link, i) =>
             <MenuLink {...link}
-              key={i}
+              key={`${i}${link.text}expandedright`}
               last={i === rightLinks.length - 1}
               active={link.action === location}
             />
           )}
         </div>
-        <div style={styles.placeHolder}>
+        <div style={styles.placeHolder} >
           <div id='iconRight' style={scrollY > menuMovePoint ? styles.rightIcon : [styles.rightIcon, styles.iconHidden]} />
         </div>
       </div>

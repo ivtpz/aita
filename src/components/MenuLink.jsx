@@ -38,7 +38,6 @@ const MenuLink = ({ action, text, last, active }) => {
   if (active) style.push(styles.active);
   return (typeof action === 'string' ?
     (<Link
-      key={text}
       style={{ textDecoration: 'none' }}
       to={action}>
       <div style={style}>
@@ -46,7 +45,6 @@ const MenuLink = ({ action, text, last, active }) => {
       </div>
     </Link>) :
     (<div
-      key={text}
       style={style}
       onTouchTap={action}>
       {text}
