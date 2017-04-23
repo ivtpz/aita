@@ -1,5 +1,5 @@
 node_modules
-public/bundle.js
-public/font-awesome*/**
-public/fonts/*
-public/assets
+client/public/bundle.js
+client/public/font-awesome*/**
+client/public/fonts/*
+client/public/assets

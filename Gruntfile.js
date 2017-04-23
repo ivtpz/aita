@@ -31,7 +31,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          "public/bundle.js": ["src/**/*.js*"]
+          "client/public/bundle.js": ["client/src/**/*.js*"]
         }
       }
     }
