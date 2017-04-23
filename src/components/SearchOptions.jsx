@@ -15,13 +15,12 @@ const styles = {
   searchOption: {
     minWidth: 180,
     padding: 5,
-    margin: '5px 0px 5px 5px',
+    margin: '5px 0px 5px 10px',
     fontSize: '18px',
     textAlign: 'center',
     cursor: 'pointer',
     color: colors.PrimaryDark,
     borderLeft: border,
-    marginLeft: 10,
     transition: 'all 0.2s ease',
     '@media (max-width: 480px)': {
       fontSize: '17px',
@@ -36,8 +35,7 @@ const styles = {
   },
   lastStyle: {
     borderRight: border,
-    margin: '5px 10px 5px 5px',
-    marginLeft: 0
+    margin: '5px 10px 5px 0px'
   }
 };
 
@@ -51,7 +49,7 @@ const component = (props) => {
     <div>
       <div
         style={!last ? searchOption : [searchOption, lastStyle]}
-        onTouchTap={e => {
+        onTouchTap={(e) => {
           e.preventDefault();
           open(name, e.currentTarget);
         }}
@@ -71,6 +69,7 @@ const component = (props) => {
         >
           {options.map(o =>
             <MenuItem
+              key={o.text}
               value={o.text}
               primaryText={o.text}
               onTouchTap={() => {
