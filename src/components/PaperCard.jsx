@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import IconButton from 'material-ui/IconButton';
 import Radium from 'radium';
 
+import Authors from './Authors';
 import Categories from './Categories';
 import ExpandableText from './ExpandableText';
 import DownloadLink from './DownloadLink';
@@ -10,7 +11,6 @@ import { colors } from '../theme/colors';
 
 // Actions
 import { addReference, removeReference } from '../actions/user';
-import { showSnackBar, hideSnackBar } from '../actions/materialUi';
 
 const styles = {
   card: {
@@ -46,13 +46,6 @@ const styles = {
     backgroundColor: 'white',
     padding: 8
   },
-  author: {
-    fontSize: '1.1em',
-    borderBottom: `1px solid ${colors.NeutralDark}`,
-    display: 'inline',
-    color: colors.PrimaryDark,
-    marginRight: 5
-  },
   publishedDate: {
     marginTop: 10
   },
@@ -73,7 +66,10 @@ const styles = {
     textShadow: `1px 1px 2px ${colors.NeutralDark}`,
     fontSize: 35,
     display: 'inline',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    ':hover': {
+      textShadow: `2px 2px 4px ${colors.NeutralDark}`
+    }
   },
   tooltip: {
     fontSize: '16px'
@@ -95,10 +91,6 @@ const PaperCard = ({
     author, link, category,
     primary_category: { _term }
   } = data;
-  const authors = Array.isArray(author) ?
-  author.slice(0, 10).map((a, i) => (i === author.length - 1 ? a.name : `${a.name},`)) :
-  [author.name];
-  if (author.length > 10) authors.push('et al.');
 
   const refId = id.split('abs/').pop();
   const added = Array.isArray(references) ?
@@ -117,24 +109,15 @@ const PaperCard = ({
     >
       <div style={heading}>{title}</div>
       <div style={body}>
-        {authors.map(name =>
-          <div
-            key={name + refId}
-            style={name !== 'et al.' ?
-              styles.author :
-              [styles.author, { borderBottom: 'none' }]
-            }
-          >{name}</div>
-        )}
+        <Authors authorData={author} />
         <IconButton
-          ref='plusIcon'
           key={`plusIcon${refId}`}
           style={iconContainer}
           tooltip={added ? 'Remove Reference' : 'Save Reference'}
           tooltipStyles={tooltip}
           tooltipPosition='top-center'
-          iconStyle={added ? { ...icon, ...minus } : icon}
           hoveredStyle={{ top: '-2px' }}
+          iconStyle={added ? { ...icon, ...minus } : icon}
           iconClassName={added ? 'fa fa-minus-circle' : 'fa fa-plus-circle'}
           onTouchTap={() => (added ? removeFromUser(refId) : addToUser(refId, data))}
         />
@@ -169,9 +152,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   addToUser: (id, data) => dispatch(addReference(id, data)),
-  removeFromUser: id => dispatch(removeReference(id)),
-  confirmAdd: () => dispatch(showSnackBar('Reference added to your saved list')),
-  confirmRemove: () => dispatch(showSnackBar('Reference removed from your saved list')),
+  removeFromUser: id => dispatch(removeReference(id))
 });
 
 export default connect(
