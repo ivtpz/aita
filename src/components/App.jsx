@@ -6,7 +6,7 @@ import Snackbar from 'material-ui/Snackbar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 // Actions
-import { initializeLock, showAuthLock } from '../actions/auth';
+import { initializeLock } from '../actions/auth';
 import { setScrollLoc } from '../actions/window';
 import { hideSnackBar } from '../actions/materialUi';
 // Components
@@ -28,29 +28,30 @@ class App extends Component {
   render() {
     const {
       location: { pathname },
-      snackOpen,
-      snackMsg,
+      open,
+      message,
       closeSnack,
-      openLogIn
+      action,
+      onActionTap
     } = this.props;
     return (
       <StyleRoot>
-        <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
+        <MuiThemeProvider muiTheme={getMuiTheme(theme)} key='mainstyle'>
           <div>
-            <Menu location={pathname}/>
+            <Menu location={pathname} key='menumain'/>
             {this.props.children}
             <Snackbar
-              open={snackOpen}
-              message={snackMsg}
+              open={open}
+              message={message}
               onRequestClose={closeSnack}
               autoHideDuration={6000}
-              action={'Log In'}
-              onActionTouchTap={() => {
-                openLogIn();
-                closeSnack();
-              }}
-              contentStyle={{ fontSize: '18px' }}
-              bodyStyle={{ background: `radial-gradient(${colors.transDarkGrey}, ${colors.PrimaryDark})` }} />
+              action={action}
+              onActionTouchTap={onActionTap}
+              contentStyle={{ fontSize: '16px' }}
+              bodyStyle={{
+                background: `radial-gradient(${colors.transDarkGrey}, ${colors.PrimaryDark})`,
+                maxWidth: 300
+              }} />
             </div>
           </MuiThemeProvider>
       </StyleRoot>
@@ -59,15 +60,13 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  snackOpen: state.materialUi.snackBar.open,
-  snackMsg: state.materialUi.snackBar.message
+  ...state.materialUi.snackBar
 });
 
 const mapDispatchToProps = dispatch => ({
   init: () => dispatch(initializeLock()),
   setScrollY: pos => dispatch(setScrollLoc(pos)),
-  closeSnack: () => dispatch(hideSnackBar()),
-  openLogIn: () => dispatch(showAuthLock())
+  closeSnack: () => dispatch(hideSnackBar())
 });
 
 export default connect(
