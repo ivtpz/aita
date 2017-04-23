@@ -13,6 +13,15 @@ const styles = {
     ':hover': {
       color: colors.Mint
     }
+  },
+  container: {
+    padding: 1,
+    width: 35,
+    height: 35,
+    borderRadius: '50%'
+  },
+  hovered: {
+    backgroundColor: colors.transMint
   }
 };
 
@@ -38,10 +47,10 @@ const DownloadLink = ({ type, link, id }) => {
         <IconButton
           ref={`download${id}`}
           key={`download${id}`}
-          tooltip={'Download'}
+          tooltip={faclass === 'pdf' ? 'View PDF' : 'Open Arxiv page'}
           tooltipStyles={{ fontSize: '16px' }}
-          style={{ padding: 5 }}
-          hoveredStyle={{ color: colors.Mint }}
+          style={styles.container}
+          hoveredStyle={styles.hovered}
           iconStyle={styles.base}
           iconClassName={className}
         ></IconButton>
