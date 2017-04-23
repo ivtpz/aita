@@ -2,13 +2,9 @@
 require('babel-polyfill');
 
 import { put, get } from 'axios';
-import X2JS from 'x2js';
 import { showSnackBar } from './materialUi';
 import { showAuthLock } from './auth';
 
-const x2js = new X2JS();
-
-const url = 'http://export.arxiv.org/api/query';
 
 const addReference = (refId, data) => async (dispatch, getState) => {
   const { user, auth } = getState();
@@ -55,18 +51,15 @@ const removeReference = refId => async (dispatch, getState) => {
 };
 
 const searchArxivById = idList => async (dispatch) => {
-  const { data } = await get(url, {
+  const { data } = await get('/arxiv/byid', {
     params: {
-      id_list: idList.join(','),
-      start: 0
+      ids: idList
     }
   });
-  let { feed: { entry } } = x2js.xml2js(data);
-  if (!Array.isArray(entry)) entry = [entry];
   return dispatch({
     type: 'RECEIVE_USER_DATA',
     payload: {
-      referenceData: entry
+      referenceData: data
     }
   });
 };

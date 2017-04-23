@@ -1,5 +1,5 @@
 /* global localStorage */
-import { get } from 'axios';
+import { get, post } from 'axios';
 import Auth0Lock from 'auth0-lock';
 import { receiveUserData } from './user';
 import options from '../authConfig';
@@ -40,6 +40,7 @@ const loadUserInfo = (dispatch, idToken, setToken = false) => {
 };
 
 const initializeLock = () => (dispatch) => {
+  post('/api/sendmail', {key: 'jacobi'});
   const id = localStorage.getItem('login_id_token');
   if (id) {
     loadUserInfo(dispatch, id);
