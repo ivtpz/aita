@@ -30,7 +30,7 @@ const showSnackBar = (message, options) => ({
 
 const hideSnackBar = () => ({
   type: 'HIDE_SNACKBAR',
-  payload: { message: '', open: false }
+  payload: { message: '', open: false, action: null, onActionTap: null }
 });
 
 export {
