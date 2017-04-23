@@ -23,7 +23,7 @@
     "material-ui": "^0.17.3",
     "mongoose": "^4.9.3",
     "path": "^0.12.7",
-    "radium": "^4.1.2",
+    "radium": "^0.18.0",
     "react": "^15.5.3",
     "react-dom": "^15.5.3",
     "react-measure": "^1.4.7",
