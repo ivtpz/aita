@@ -1,7 +1,7 @@
 import X2JS from 'x2js';
 import { Mailgun } from 'mailgun';
 import { get } from 'axios';
-import Users from '../db/config';
+import { Users, SubjectCounts } from '../db/config';
 import { generateEmail } from '../helpers/email';
 
 const x2js = new X2JS();
@@ -66,6 +66,18 @@ const getArxivDataById = async (req, res) => {
   res.status(200).send(data);
 };
 
+const updateSubjectCount = async (req, res) => {
+  const { id, count } = req.body;
+  try {
+    const subject = await SubjectCounts.findOne({ id });
+    subject.count = count;
+    const update = await subject.save();
+    res.status(200).send(update);
+  } catch (err) {
+    res.status(401).send(err);
+  }
+};
+
 const sendMail = async (req, res) => {
   const { body: { email, recommendations, name } } = req;
   const rawAricleData = await arxivRequest(recommendations);
@@ -90,5 +102,6 @@ export {
   removeReference,
   addUser,
   getArxivDataById,
+  updateSubjectCount,
   sendMail
 };

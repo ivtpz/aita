@@ -3,7 +3,14 @@ import { urlencoded, json } from 'body-parser';
 // import { AuthenticationClient } from 'auth0';
 import path from 'path';
 import morgan from 'morgan';
-import { findOrAddUser, addReference, removeReference, sendMail, getArxivDataById } from './routes/routes';
+import {
+  findOrAddUser,
+  addReference,
+  removeReference,
+  sendMail,
+  getArxivDataById,
+  updateSubjectCount
+} from './routes/routes';
 import { checkOrigin } from './routes/auth';
 
 const app = express();
@@ -22,6 +29,7 @@ app.get('/user', findOrAddUser);
 app.put('/user/add', addReference);
 app.put('/user/remove', removeReference);
 app.get('/arxiv/byid', getArxivDataById);
+app.put('/arxiv/subject', updateSubjectCount);
 app.post('/api/sendmail', checkOrigin, sendMail);
 
 app.get('/*', (req, res) => {
