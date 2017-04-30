@@ -73,10 +73,13 @@ const sendMail = async (req, res) => {
   mg.sendRaw(
     'postmaster@sandbox578359e90d3a4d388e18dfc61088e7d8.mailgun.org', // Sender
     email, // Recepient
-    'From the server', // Subject
-    emailBody, // Message
+    'From: sender@example.com' +
+      '\nTo: ' + email +
+      '\nContent-Type: text/html; charset=utf-8' +
+      '\nSubject: I Love Email' +
+      emailBody,
     err => (err ?
-      res.status(503).send('Failed to send email') :
+      res.status(503).send(`Failed to send email: ${err}`) :
       res.status(200).send()
     ));
 };
