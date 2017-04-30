@@ -8,9 +8,10 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import { Provider } from 'react-redux';
 import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 import store from './store/storeConfig';
-import App from './components/App';
-import SearchPage from './components/SearchPage';
-import UserReferences from './components/UserReferences';
+import App from './containers/App';
+import SearchPage from './containers/SearchPage';
+import UserReferences from './containers/UserReferences';
+import LandingPage from './containers/LandingPage';
 
 injectTapEventPlugin();
 
@@ -18,10 +19,11 @@ const Root = ({ appStore }) => (
   <Provider store={appStore}>
     <Router history={browserHistory}>
       <Route path='/' component={App}>
-        <IndexRoute component={SearchPage} />
+        <IndexRoute component={LandingPage} />
         <Route
           path='/references'
           component={UserReferences} />
+        <Route path='/search(:search)' component={SearchPage} />
       </Route>
     </Router>
   </Provider>
