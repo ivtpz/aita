@@ -7,7 +7,7 @@ import Radium from 'radium';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Divider from 'material-ui/Divider';
-import MenuLink from './MenuLink';
+import MenuLink from '../components/MenuLink';
 import { colors } from '../theme/colors';
 // Actions
 import { showAuthLock, logout } from '../actions/auth';
@@ -162,20 +162,20 @@ class Menu extends Component {
   };
 
   render() {
-    const leftLinks = [
-      { text: 'My References', action: '/references' },
-      { text: 'Recommendations', action: '/' }
-    ];
-    const title = 'AITA';
     const {
       toggle, open, setDrawer, loggedIn,
       openLock, quit, location, scrollY
     } = this.props;
+    const leftLinks = [
+      { text: 'My References', action: loggedIn ? '/references' : () => openLock('/references') },
+      { text: 'Recommendations', action: '/' }
+    ];
+    const title = 'AITA';
     const authLink = loggedIn ?
       { text: 'Log out', action: quit } :
-      { text: 'Log in', action: openLock };
+      { text: 'Log in', action: () => openLock(location) };
     const rightLinks = [
-      { text: 'Search the Arxiv', action: '/' },
+      { text: 'Search the Arxiv', action: '/search' },
       authLink
     ];
     return (
@@ -248,7 +248,7 @@ const mapStateToProps = ({ materialUi, windowReducer, auth }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  openLock: refId => dispatch(showAuthLock(refId)),
+  openLock: nextLoc => dispatch(showAuthLock(nextLoc)),
   close: () => dispatch(closeDrawer()),
   toggle: () => dispatch(toggleDrawer()),
   setDrawer: open => dispatch(setDrawerState(open)),

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Radium from 'radium';
-import { main, searchBox, resultsContainer } from './sharedStyles';
+import { main, searchBox, resultsContainer } from '../theme/sharedStyles';
 // Actions
 import { filterUserRefs, makeUserRefsVisible } from '../actions/user';
 // Components
-import PaperCard from './PaperCard';
-import SearchField from './SearchField';
+import PaperCard from '../components/PaperCard';
+import SearchField from '../components/SearchField';
 
 
 class UserReferences extends Component {
