@@ -7,7 +7,7 @@ const windowReducer = (state = initialState, action) => {
     case 'SET_SCROLL_LOCATION':
       return {
         ...state,
-        ...action
+        scrollY: action.scrollY
       };
     default:
       return state;
