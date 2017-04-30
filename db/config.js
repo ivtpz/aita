@@ -13,4 +13,15 @@ const userSchema = new mongoose.Schema({
 
 const Users = mongoose.model('User', userSchema);
 
-export default Users;
+const subjectCountSchema = new mongoose.Schema({
+  id: String,
+  name: String,
+  count: Number
+});
+
+const SubjectCounts = mongoose.model('SubjectCount', subjectCountSchema);
+
+export {
+  Users,
+  SubjectCounts
+};
