@@ -5,7 +5,8 @@ const initialState = {
   query: undefined,
   category: { text: 'All', arxivValue: 'all' },
   sortBy: { text: 'Relevance', arxivValue: 'relevance' },
-  sortOrder: 'descending'
+  sortOrder: 'descending',
+  metaData: []
 };
 
 const arxiv = (state = initialState, action) => {
@@ -15,6 +16,7 @@ const arxiv = (state = initialState, action) => {
     case 'SET_ARXIV_CATEGORY':
     case 'SET_SEARCH_PAGE':
     case 'SET_ARXIV_SORTBY':
+    case 'RECEIVE_SUBJECT_METADATA':
       return {
         ...state,
         ...action.payload

@@ -1,5 +1,6 @@
 import { get } from 'axios';
 import X2JS from 'x2js';
+import createHierarchy from '../helpers/arxivDataFormatting';
 import dummyData from '../helpers/dummyArxivData';
 
 const x2js = new X2JS();
@@ -32,6 +33,16 @@ const setSearchPage = page => ({
   payload: { page }
 });
 
+const receiveSubjectCountData = metaData => ({
+  type: 'RECEIVE_SUBJECT_METADATA',
+  payload: { metaData }
+});
+
+const getSubjectCountData = () => async (dispatch) => {
+  const { data } = await get('/arxiv/subject');
+  dispatch(receiveSubjectCountData(createHierarchy(data)));
+};
+
 const searchArxiv = page => async (dispatch, getState) => {
   const { query, category, sortBy, sortOrder } = getState().arxiv;
   let formattedQ;
@@ -62,5 +73,6 @@ export {
   searchArxiv,
   setSearchPage,
   setSearchCategory,
-  setSearchSort
+  setSearchSort,
+  getSubjectCountData
 };
