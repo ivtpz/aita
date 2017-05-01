@@ -9,7 +9,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { initializeLock } from '../actions/auth';
 import { setScrollLoc } from '../actions/window';
 import { hideSnackBar } from '../actions/materialUi';
-// Components
+// Containers
 import Menu from './Menu';
 // Style
 import { theme, colors } from '../theme/colors';

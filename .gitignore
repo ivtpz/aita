@@ -3,3 +3,4 @@ client/public/bundle.js
 client/public/font-awesome*/**
 client/public/fonts/*
 client/public/assets
+routes/.populate*

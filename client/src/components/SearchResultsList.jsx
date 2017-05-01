@@ -1,7 +1,7 @@
 import React from 'react';
 import PaperCard from './PaperCard';
 import Pagination from './Pagination';
-import { resultsContainer } from './sharedStyles';
+import { resultsContainer } from '../theme/sharedStyles';
 
 
 const SearchResultsList = ({

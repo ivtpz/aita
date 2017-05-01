@@ -1,6 +1,7 @@
 /* global localStorage */
-import { get, post } from 'axios';
+import { get } from 'axios';
 import Auth0Lock from 'auth0-lock';
+import { browserHistory } from 'react-router';
 import { receiveUserData } from './user';
 import options from '../authConfig';
 
@@ -10,6 +11,11 @@ const lock = new Auth0Lock(
   options
 );
 
+const redirectKey = 'redirect_after_login';
+const authKey = 'login_id_token';
+
+const removeNextLoc = () => localStorage.removeItem(redirectKey);
+
 const displayError = error => ({
   type: 'AUTH_ERROR',
   error
@@ -18,7 +24,7 @@ const displayError = error => ({
 const login = () => ({ type: 'LOG_IN' });
 
 const logout = () => {
-  localStorage.removeItem('login_id_token');
+  localStorage.removeItem(authKey);
   return { type: 'LOG_OUT' };
 };
 
@@ -27,7 +33,7 @@ const loadUserInfo = (dispatch, idToken, setToken = false) => {
     if (err) {
       return dispatch(displayError(err));
     }
-    if (setToken) localStorage.setItem('login_id_token', idToken);
+    if (setToken) localStorage.setItem(authKey, idToken);
     const user = await get('/user', {
       params: { email }
     });
@@ -40,23 +46,34 @@ const loadUserInfo = (dispatch, idToken, setToken = false) => {
 };
 
 const initializeLock = () => (dispatch) => {
-  post('/api/sendmail', {key: 'jacobi'});
-  const id = localStorage.getItem('login_id_token');
+  lock.on('authenticated', ({ idToken }) => {
+    const nextLoc = localStorage.getItem(redirectKey);
+    loadUserInfo(dispatch, idToken, true);
+    if (nextLoc) {
+      removeNextLoc();
+      browserHistory.push(nextLoc);
+    }
+  });
+
+  lock.on('hide', () => {
+    removeNextLoc();
+    return dispatch({ type: 'AUTH_LOCK_HIDDEN' });
+  });
+
+  lock.on('authorization_error', err => dispatch(displayError(err)));
+
+  const id = localStorage.getItem(authKey);
   if (id) {
     loadUserInfo(dispatch, id);
   }
-  lock.on('authenticated', ({ idToken }) => {
-    // dispatch({ type: 'AUTH_LOCK_HIDDEN' });
-    loadUserInfo(dispatch, idToken, true);
-  });
-  lock.on('hide', () => dispatch({ type: 'AUTH_LOCK_HIDDEN' }));
+
   dispatch({ type: 'AUTH_LOCK_INITIALIZED' });
-  lock.on('authorization_error', err => dispatch(displayError(err)));
 };
 
-const showAuthLock = () => (dispatch) => {
+const showAuthLock = nextLoc => (dispatch) => {
+  if (nextLoc) localStorage.setItem(redirectKey, nextLoc);
   lock.show();
-  return dispatch({ type: 'AUTH_LOCK_VISIBLE' });
+  return dispatch({ type: 'AUTH_LOCK_VISIBLE', nextLoc });
 };
 
 export {

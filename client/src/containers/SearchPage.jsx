@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Radium from 'radium';
-import { main, searchBox } from './sharedStyles';
+import { main, searchBox } from '../theme/sharedStyles';
 // Actions
 import { setSearchQuery, searchArxiv, setSearchSort, setSearchCategory } from '../actions/arxiv';
 // Components
-import SearchResultsList from './SearchResultsList';
-import SearchField from './SearchField';
-import SearchOptions from './SearchOptions';
+import SearchResultsList from '../components/SearchResultsList';
+import SearchField from '../components/SearchField';
+import SearchOptions from '../components/SearchOptions';
 
 const styles = {
   optionsContainer: {

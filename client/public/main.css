@@ -3,6 +3,32 @@ body {
   margin: 0;
 }
 
+svg {
+  padding-top: 100px;
+  display: block;
+  margin: auto;
+  fill: #29cc80;
+}
+
+.node circle {
+  stroke: rgba(31, 119, 180, 0.35);
+  stroke-width: 1px;
+}
+
+.node.middle circle {
+  stroke: rgb(30, 220, 152);
+}
+
+.node.leaf circle {
+  stroke: rgba(255, 255, 255, 0.9);
+}
+
+text {
+  font-style: sans-serif;
+  text-anchor: middle;
+  fill: darkslategray;
+}
+
 #icon {
   background-image: url('./robot.png');
   width: 100%;
