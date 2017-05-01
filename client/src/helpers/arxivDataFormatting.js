@@ -9,31 +9,24 @@ const translate = {
   noPrefix: 'Other'
 };
 
-const descending = (a, b) => b.count - a.count;
-
 const createHierarchy = (data) => {
   const tree = {
-    name: 'Subjects',
-    id: 'subjects',
+    name: 'All Subjects',
+    id: 'root',
     children: []
   };
   data.forEach(({ name, id, count }) => {
     const general = id.split('.')[0];
     const current = tree.children.find(c => c.id === general);
     if (current) {
-      current.hiddenChildren.push({ name, count });
+      current.children.push({ name, count, id });
     } else {
       tree.children.push({
         id: general,
         name: translate[general],
-        hiddenChildren: [{ name, count, id }]
+        children: [{ name, count, id }]
       });
     }
-    tree.children.forEach((cat) => {
-      cat.count = cat.hiddenChildren.reduce((sum, c) => sum + c.count, 0);
-      cat.hiddenChildren.sort(descending);
-    });
-    tree.children.sort(descending);
   });
   return tree;
 };
