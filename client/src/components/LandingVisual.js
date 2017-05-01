@@ -7,118 +7,174 @@ let metaData;
 
 const format = d3.format(',d');
 
-const updateMetaData = (pack, D) => {
-  console.log(D);
-  const updateChild = metaData.children.find(c => c.id === D.data.id);
-  if (updateChild && updateChild.hiddenChildren) {
-    updateChild.children = [...updateChild.hiddenChildren];
-    delete updateChild.hiddenChildren;
-  }
+const showChildren = ({ data: { id } }) => {
+  const parent = d3.selectAll('.node')
+    .filter(d => d.data.id === id);
 
-  const root = d3.hierarchy(metaData)
-    .sum(d => d.count);
+  parent.select('text')
+    .transition()
+      .duration(250)
+      .style('opacity', 0);
 
-  const old = d3.select('g')
-    .selectAll('.node');
+  parent.select('circle')
+    .on('click', hideChildren); // eslint-disable-line no-use-before-define
 
-  old.remove();
+  const children = d3.selectAll('.node')
+    .filter(d => d.parent && d.parent.data.id === id);
 
-  const node = d3.select('g')
-    .selectAll('.node')
-    .data(pack(root).descendants())
-    .enter()
-    .append('g')
-      .attr('class', d => (d.children ? 'node' : 'leaf node'))
-      .attr('transform', d => `translate(${d.x},${d.y})`);
+  children.select('text')
+    .style('visibility', 'visible')
+    .transition()
+      .duration(700)
+      .style('opacity', 1);
 
+  children.select('circle')
+    .style('visibility', 'visible')
+    .transition()
+      .duration(700)
+      .style('stroke-opacity', 1)
+      .style('fill-opacity', 1);
+};
 
-  node.append('title')
-    .text(d => `${d.data.name}\n${format(d.value)}`);
+const hideChildren = ({ data: { id } }) => {
+  const parent = d3.selectAll('.node')
+    .filter(d => d.data.id === id);
 
-  node.append('circle')
-    .attr('r', d => d.r)
-    .attr('fill', d => (d.children ? 'url(#nodeBackground)' : 'url(#leafBackground)'))
-    .on('click', updateMetaData.bind(null, pack));
+  parent.select('text')
+    .transition()
+      .duration(700)
+      .style('opacity', 1);
 
-  node.filter(d => !d.children)
-    .append('text')
-    .attr('dy', '0.3em')
-    .attr('style', d =>
-      (d.value > 35000 ? 'font-size: 12px' : 'font-size: 10px'))
-    .text(d => d.data.name.replace('-', '-\n').substring(0, d.r / 3));
+  parent.select('circle')
+    .on('click', showChildren);
 
-  console.log(node)
-    // .append('g')
-    //   .attr('class', d => (d.children ? 'node' : 'leaf node'))
-    //   .attr('transform', d => `translate(${d.x},${d.y})`);
+  const children = d3.selectAll('.node')
+    .filter(d => d.parent && d.parent.data.id === id);
+
+  children.select('text')
+    .transition()
+      .duration(250)
+      .style('opacity', 0)
+    .transition()
+      .delay(250)
+      .style('visibility', 'hidden');
+
+  children.select('circle')
+    .transition()
+      .duration(250)
+      .style('stroke-opacity', 0)
+      .style('fill-opacity', 0)
+    .transition()
+      .delay(250)
+      .style('visibility', 'hidden');
 };
 
 const LandingVisual = d3Wrap({
-  initialize(svg, data, options) {
+  initialize(svg) {
     d3.select(svg).selectAll('*').remove();
   },
   update(svg, data, { rendered, setRendered, setDestroyed }) {
+    // Keep gloabal access to redux destroy notification action
     destroyFn = setDestroyed;
     if (!rendered && data.children && data.children.length) {
       metaData = { ...data };
       const vis = d3.select(svg).attr('id', 'd3root');
+
+      // Append background gradient definitions
       const defs = vis
         .append('defs');
 
       const nodeGrad = defs.append('radialGradient')
           .attr('id', 'nodeBackground');
 
+      const middleGrad = defs.append('radialGradient')
+          .attr('id', 'middleBackground');
+
       const leafGrad = defs.append('radialGradient')
           .attr('id', 'leafBackground');
 
       nodeGrad.append('stop')
-        .attr('offset', '10%')
-        .attr('stop-color', 'rgba(31, 119, 180, 0.35)');
+        .attr('offset', '30%')
+        .attr('stop-color', 'rgba(40, 120, 140, 0.85)');
       nodeGrad.append('stop')
         .attr('offset', '95%')
-        .attr('stop-color', 'rgba(31, 119, 180, 0.2)');
+        .attr('stop-color', 'rgba(40, 120, 140, 0.6)');
 
-      leafGrad.append('stop')
+      middleGrad.append('stop')
         .attr('offset', '10%')
         .attr('stop-color', 'rgba(25, 240, 152, 0.95)');
-      leafGrad.append('stop')
+      middleGrad.append('stop')
         .attr('offset', '95%')
         .attr('stop-color', 'rgba(30, 220, 152, 0.95)');
 
+      leafGrad.append('stop')
+        .attr('offset', '10%')
+        .attr('stop-color', 'rgba(255, 255, 255, 1)');
+      leafGrad.append('stop')
+        .attr('offset', '95%')
+        .attr('stop-color', 'rgba(245, 245, 245, 0.95)');
+
       const g = vis.append('g').attr('transform', 'translate(2,2)');
 
-      const pack = d3.pack().size([996, 996]);
+      // Set borders of pack container, and padding between circles
+      const pack = d3.pack()
+        .size([996, 996])
+        .padding(2);
 
+      // Format data for packing
       const root = d3.hierarchy(metaData)
-        .sum(d => d.count);
-        // No need to sort, data is presorted in createHierarchy function
+        .sum(d => d.count)
+        .sort((a, b) => b.value - a.value);
 
-
+      // Apply data and classes
       const node = g.selectAll('.node')
         .data(pack(root).descendants())
         .enter().append('g')
-          .attr('class', d => (d.children ? 'node' : 'leaf node'))
+          // eslint-disable-next-line no-nested-ternary
+          .attr('class', d => (d.data.id === 'root' ? 'node' : (d.children ? 'middle node' : 'leaf node')))
           .attr('transform', d => `translate(${d.x},${d.y})`);
 
+      // Add titles for hover info
       node.append('title')
-        .text(d => `${d.data.name}\n${format(d.value)}`);
+        .text(d => `${d.data.name}\n${format(d.value)} Papers`);
 
-      const circles = node.append('circle')
+      const circles = node.append('circle');
+
+      circles
         .attr('r', d => d.r)
-        .attr('fill', d => (d.children ? 'url(#nodeBackground)' : 'url(#leafBackground)'))
-        .on('click', updateMetaData.bind(null, pack));
+        .attr('fill', (d) => {
+          if (d.data.id === 'root') return 'url(#nodeBackground)';
+          return d.children ? 'url(#middleBackground)' : 'url(#leafBackground)';
+        });
 
-      node.transition()
-        .duration(2000);
-      circles.transition()
-        .duration(2000);
+      // Click handlers for parents
+      circles.filter(d => d.children && d.data.id !== 'root')
+        .on('click', showChildren)
+        .style('cursor', 'pointer');
 
-      node.filter(d => !d.children)
+      // Start with children hidden
+      circles.filter(d => !d.children)
+        .style('visibility', 'hidden')
+        .style('fill-opacity', 0)
+        .style('stroke-opacity', 0);
+
+      // Add text to all data except root
+      node.filter(d => d.data.id !== 'root')
         .append('text')
         .attr('dy', '0.3em')
+        .text(d => d.data.name.substring(0, d.r / 3));
+
+      node.filter(d => d.children)
+        .select('text')
+        .attr('style', 'font-size: 16px');
+
+      // Hide child text
+      node.filter(d => !d.children)
+        .select('text')
         .attr('style', d =>
-          (d.value > 35000 ? 'font-size: 12px' : 'font-size: 10px'))
-        .text(d => d.data.name.replace('-', '-\n').substring(0, d.r / 3));
+          (d.r > 48 ? 'font-size: 12px' : 'font-size: 10px'))
+        .style('opacity', 0)
+        .style('visibility', 'hidden');
 
       setRendered();
     }
