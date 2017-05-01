@@ -3,15 +3,18 @@ import { urlencoded, json } from 'body-parser';
 // import { AuthenticationClient } from 'auth0';
 import path from 'path';
 import morgan from 'morgan';
-import {
+import routes from './routes/routes';
+
+const {
   findOrAddUser,
   addReference,
   removeReference,
   sendMail,
   getArxivDataById,
-  updateSubjectCount
-} from './routes/routes';
-import { checkOrigin } from './routes/auth';
+  updateSubjectCount,
+  getArxivSubjectCounts,
+  checkOrigin
+} = routes;
 
 const app = express();
 const port = process.env.PORT || 6543;
@@ -25,11 +28,17 @@ app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(express.static(path.join(__dirname, '/client/public')));
 
+// User routes
 app.get('/user', findOrAddUser);
 app.put('/user/add', addReference);
 app.put('/user/remove', removeReference);
+
+// Arxiv data routes
 app.get('/arxiv/byid', getArxivDataById);
+app.get('/arxiv/subject', getArxivSubjectCounts);
 app.put('/arxiv/subject', updateSubjectCount);
+
+// Mail service route
 app.post('/api/sendmail', checkOrigin, sendMail);
 
 app.get('/*', (req, res) => {
