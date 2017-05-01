@@ -7,18 +7,16 @@ let metaData;
 
 const format = d3.format(',d');
 
-const updateMetaData = (pack, d) => {
-  console.log(d);
-  const updateChild = metaData.children.find(c => c.id === d.data.id);
+const updateMetaData = (pack, D) => {
+  console.log(D);
+  const updateChild = metaData.children.find(c => c.id === D.data.id);
   if (updateChild && updateChild.hiddenChildren) {
     updateChild.children = [...updateChild.hiddenChildren];
-    delete updateChild.count;
     delete updateChild.hiddenChildren;
   }
 
   const root = d3.hierarchy(metaData)
-    .sum(d => d.count)
-    .sort((a, b) => b.value - a.value);
+    .sum(d => d.count);
 
   const old = d3.select('g')
     .selectAll('.node');
@@ -28,7 +26,8 @@ const updateMetaData = (pack, d) => {
   const node = d3.select('g')
     .selectAll('.node')
     .data(pack(root).descendants())
-    .enter().append('g')
+    .enter()
+    .append('g')
       .attr('class', d => (d.children ? 'node' : 'leaf node'))
       .attr('transform', d => `translate(${d.x},${d.y})`);
 
@@ -91,8 +90,9 @@ const LandingVisual = d3Wrap({
       const pack = d3.pack().size([996, 996]);
 
       const root = d3.hierarchy(metaData)
-        .sum(d => d.count)
-        .sort((a, b) => b.value - a.value);
+        .sum(d => d.count);
+        // No need to sort, data is presorted in createHierarchy function
+
 
       const node = g.selectAll('.node')
         .data(pack(root).descendants())

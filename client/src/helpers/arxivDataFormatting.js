@@ -9,6 +9,8 @@ const translate = {
   noPrefix: 'Other'
 };
 
+const descending = (a, b) => b.count - a.count;
+
 const createHierarchy = (data) => {
   const tree = {
     name: 'Subjects',
@@ -29,7 +31,9 @@ const createHierarchy = (data) => {
     }
     tree.children.forEach((cat) => {
       cat.count = cat.hiddenChildren.reduce((sum, c) => sum + c.count, 0);
+      cat.hiddenChildren.sort(descending);
     });
+    tree.children.sort(descending);
   });
   return tree;
 };
