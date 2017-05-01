@@ -4,6 +4,7 @@ import { urlencoded, json } from 'body-parser';
 import path from 'path';
 import morgan from 'morgan';
 import routes from './routes/routes';
+import populate from './routes/populateSubjectDB';
 
 const {
   findOrAddUser,
@@ -13,7 +14,8 @@ const {
   getArxivDataById,
   updateSubjectCount,
   getArxivSubjectCounts,
-  checkOrigin
+  checkOrigin,
+  addSubjectCount
 } = routes;
 
 const app = express();
@@ -36,6 +38,7 @@ app.put('/user/remove', removeReference);
 // Arxiv data routes
 app.get('/arxiv/byid', getArxivDataById);
 app.get('/arxiv/subject', getArxivSubjectCounts);
+app.post('/arxiv/subject', populate);
 app.put('/arxiv/subject', updateSubjectCount);
 
 // Mail service route
