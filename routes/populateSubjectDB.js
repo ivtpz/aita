@@ -10,28 +10,36 @@ const x2js = new X2JS();
 let resume;
 
 
-const process = async () => {
+const processData = async () => {
   console.log('processing...')
   const records = await request();
-  Promise.all(records.map(async (r) => {
+  for (const r of records) {
     const { metadata: { arXiv: { created, categories } } } = r;
+    console.log('processing ', created, categories);
     const year = created.slice(0, 4);
     const cat = categories.split(' ')[0];
     const lookUp = cat.split('.');
     if (lookUp.length === 1) lookUp.unshift('noPrefix');
     const id = lookUp.join('.');
-    const name = cats[lookUp[0]][lookUp[1]];
-    const dbRecord = await SubjectCountYears.findOne({ id, year }).exec();
-    if (dbRecord) {
-      dbRecord.count++;
-      const update = await dbRecord.save();
-      console.log('updated: ', update);
+    const general = cats[lookUp[0]];
+    const name = general && general[lookUp[1]];
+    if (name) {
+      console.log('Saving ', cat, year, name, id);
+      const dbRecord = await SubjectCountYears.findOne({ id, year }).exec();
+      if (dbRecord) {
+        dbRecord.count++;
+        const update = await dbRecord.save();
+        console.log('updated: ', update);
+      } else {
+        const entry = await new SubjectCountYears({ name, id, year, count: 1 }).save();
+        console.log('added new category and year: ', entry);
+      }
     } else {
-      const entry = await new SubjectCountYears({ name, id, year, count: 1 }).save();
-      console.log('added new category and year: ', entry);
+      console.log('could not save ', name);
     }
-  }));
-  setTimeout(process, 30000);
+  }
+  console.log('setting timeout to run again');
+  setTimeout(processData, 30000);
 };
 
 
@@ -56,4 +64,4 @@ const request = async () => {
 };
 
 
-export default process;
+export default processData;
