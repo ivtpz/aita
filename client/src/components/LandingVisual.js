@@ -181,6 +181,7 @@ const LandingVisual = d3Wrap({
     }
   },
   destroy() {
+    d3.select('#d3root').selectAll('*').remove();
     destroyFn();
   }
 });
