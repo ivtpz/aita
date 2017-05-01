@@ -33,6 +33,16 @@ const hideSnackBar = () => ({
   payload: { message: '', open: false, action: null, onActionTap: null }
 });
 
+const updateD3YearSlider = value => ({
+  type: 'UPDATE_D3_YEAR_SLIDER',
+  payload: { value }
+});
+
+const setSliderDrag = dragging => ({
+  type: 'SET_SLIDER_DRAG',
+  payload: { dragging }
+});
+
 export {
   closeDrawer,
   toggleDrawer,
@@ -40,5 +50,7 @@ export {
   openPopover,
   closePopover,
   showSnackBar,
-  hideSnackBar
+  hideSnackBar,
+  updateD3YearSlider,
+  setSliderDrag
 };
