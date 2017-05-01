@@ -38,8 +38,12 @@ const receiveSubjectCountData = metaData => ({
   payload: { metaData }
 });
 
-const getSubjectCountData = () => async (dispatch) => {
+const getSubjectCountData = metaDataYear => async (dispatch) => {
   const { data } = await get('/arxiv/subject');
+  dispatch({
+    type: 'SET_LAST_YEAR_RETREIVED',
+    payload: { metaDataYear }
+  });
   dispatch(receiveSubjectCountData(createHierarchy(data)));
 };
 
