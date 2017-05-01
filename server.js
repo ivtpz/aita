@@ -19,7 +19,7 @@ const {
 } = routes;
 
 const app = express();
-const port = process.env.PORT || 6543;
+const port = process.env.PORT || 1337;
 
 // const auth0 = new AuthenticationClient({
 //   clientId: '9ktoTjI4KL8e1qLEcTCY1SAd57LCpivK',
