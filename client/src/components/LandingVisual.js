@@ -95,17 +95,17 @@ const LandingVisual = d3Wrap({
 
       nodeGrad.append('stop')
         .attr('offset', '30%')
-        .attr('stop-color', 'rgba(40, 120, 140, 0.85)');
+        .attr('stop-color', 'rgba(117, 220, 205, 0.8)');
       nodeGrad.append('stop')
         .attr('offset', '95%')
-        .attr('stop-color', 'rgba(40, 120, 140, 0.6)');
+        .attr('stop-color', 'rgba(163, 245, 207, 0.95)');
 
       middleGrad.append('stop')
-        .attr('offset', '10%')
-        .attr('stop-color', 'rgba(25, 240, 152, 0.95)');
+        .attr('offset', '30%')
+        .attr('stop-color', 'rgba(49, 135, 180, .9)');
       middleGrad.append('stop')
         .attr('offset', '95%')
-        .attr('stop-color', 'rgba(30, 220, 152, 0.95)');
+        .attr('stop-color', 'rgba(51, 167, 194, 0.95)');
 
       leafGrad.append('stop')
         .attr('offset', '10%')
@@ -118,8 +118,8 @@ const LandingVisual = d3Wrap({
 
       // Set borders of pack container, and padding between circles
       const pack = d3.pack()
-        .size([996, 996])
-        .padding(2);
+        .size([994, 994])
+        .padding(3);
 
       // Format data for packing
       const root = d3.hierarchy(metaData)
@@ -166,7 +166,8 @@ const LandingVisual = d3Wrap({
 
       node.filter(d => d.children)
         .select('text')
-        .attr('style', 'font-size: 16px');
+        .style('font-size', '18px')
+        .style('fill', 'white');
 
       // Hide child text
       node.filter(d => !d.children)
