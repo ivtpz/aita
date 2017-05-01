@@ -3,7 +3,7 @@ body {
   margin: 0;
 }
 
-svg {
+svg#d3root {
   padding-top: 100px;
   display: block;
   margin: auto;
