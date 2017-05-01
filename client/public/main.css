@@ -7,15 +7,20 @@ svg {
   padding-top: 100px;
   display: block;
   margin: auto;
+  fill: #29cc80;
 }
 
-circle {
-  stroke: rgb(31, 119, 180);
+.node circle {
+  stroke: rgba(31, 119, 180, 0.35);
   stroke-width: 1px;
 }
 
-.leaf circle {
-  fill-opacity: 1;
+.node.middle circle {
+  stroke: rgb(30, 220, 152);
+}
+
+.node.leaf circle {
+  stroke: rgba(255, 255, 255, 0.9);
 }
 
 text {
