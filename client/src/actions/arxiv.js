@@ -39,7 +39,12 @@ const receiveSubjectCountData = metaData => ({
 });
 
 const getSubjectCountData = metaDataYear => async (dispatch) => {
-  const { data } = await get('/arxiv/subject');
+  const apiUrl = '/arxiv/subject';
+  const params = {};
+  if (metaDataYear && parseInt(metaDataYear, 10) !== new Date().getFullYear()) {
+    params.year = metaDataYear;
+  }
+  const { data } = await get(apiUrl, { params });
   dispatch({
     type: 'SET_LAST_YEAR_RETREIVED',
     payload: { metaDataYear }
