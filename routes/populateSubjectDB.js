@@ -8,7 +8,7 @@ const url = 'http://export.arxiv.org/oai2';
 
 const x2js = new X2JS();
 
-let resume = '1712418|117001';
+let resume;
 
 
 const processData = async () => {
@@ -56,6 +56,8 @@ const request = async () => {
     params.resumptionToken = resume;
   } else {
     params.metadataPrefix = 'arXiv';
+    // params.from = '2013-01-01';
+    // params.until = '2017-05-02';
   }
   console.log('params: ', params);
   try {
