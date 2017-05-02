@@ -7,11 +7,24 @@ import { getSubjectCountData } from '../actions/arxiv';
 import { initialize, destroy } from '../actions/d3Actions';
 import { updateD3YearSlider, setSliderDrag } from '../actions/materialUi';
 
+import { colors } from '../theme/colors';
+
 const styles = {
+  slideContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20
+  },
   slider: {
-    width: '65%',
-    marginLeft: 'auto',
-    marginRight: 'auto'
+    width: '65%'
+  },
+  sliderTitle: {
+    color: colors.PrimaryDark
+  },
+  year: {
+    color: colors.PrimaryBright
   }
 };
 
@@ -25,7 +38,7 @@ class LandingPage extends Component {
     const { prevSliderValue } = this.props;
     if (!dragging && prevSliderValue !== sliderValue) {
       console.log('SHOULD FETCH DATA for ', sliderValue);
-      // this.props.fetch(nextProps.sliderValue);
+      this.props.fetch(sliderValue);
     }
   }
 
@@ -49,16 +62,21 @@ class LandingPage extends Component {
             setDestroyed
           }}
         />
-        <Slider
-          min={1995}
-          step={1}
-          max={currYear}
-          value={sliderValue}
-          onChange={handleSlide}
-          onDragStop={handleDragStop}
-          onDragStart={handleDragStart}
-          style={styles.slider}
-        />
+        <div style={styles.slideContainer}>
+          <div style={styles.sliderTitle}>
+            Papers published in <span style={styles.year}>{sliderValue}</span>
+          </div>
+          <Slider
+            min={1995}
+            step={1}
+            max={currYear}
+            value={sliderValue}
+            onChange={handleSlide}
+            onDragStop={handleDragStop}
+            onDragStart={handleDragStart}
+            style={styles.slider}
+          />
+        </div>
       </div>
     );
   }
