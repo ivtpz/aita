@@ -1,6 +1,6 @@
 import X2JS from 'x2js';
 import { get } from 'axios';
-import { SubjectCounts } from '../db/config';
+import { SubjectCounts, SubjectCountYears } from '../db/config';
 
 const x2js = new X2JS();
 
@@ -24,8 +24,14 @@ const getArxivDataById = async (req, res) => {
 };
 
 const getArxivSubjectCounts = async (req, res) => {
-  const subjects = await SubjectCounts.find({}).exec();
-  res.status(200).send(subjects);
+  const { year } = req.query;
+  if (year) {
+    const subByYear = await SubjectCountYears.find({ year }).exec();
+    res.status(200).send(subByYear);
+  } else {
+    const subjects = await SubjectCounts.find({}).exec();
+    res.status(200).send(subjects);
+  }
 };
 
 const updateSubjectCount = async (req, res) => {
