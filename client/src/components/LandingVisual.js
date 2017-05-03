@@ -7,6 +7,8 @@ let g;
 
 const initialValues = {};
 
+let initialData;
+
 let initialized;
 
 const initializeStateFromData = data => data.children.reduce((obj, c) => {
@@ -14,7 +16,19 @@ const initializeStateFromData = data => data.children.reduce((obj, c) => {
   return obj;
 }, {});
 
-const getInitialSort = root => true;
+const updateData = (newData) => {
+  initialData.children.forEach((general) => {
+    const currGeneral = newData.children.find(c => c.id === general.id);
+    general.children.forEach((subject) => {
+      const currSubj = currGeneral.children.find(c => c.id === subject.id);
+      if (currSubj) {
+        subject.count = currSubj.count;
+      } else {
+        subject.count = 0;
+      }
+    });
+  });
+};
 
 const format = d3.format(',d');
 
@@ -25,6 +39,7 @@ const showChildren = ({ data: { id } }) => {
     .filter(d => d.data.id === id);
 
   parent.select('text')
+    .on('click', hideChildren)
     .transition()
       .duration(250)
       .style('opacity', 0);
@@ -56,6 +71,7 @@ const hideChildren = ({ data: { id } }) => {
     .filter(d => d.data.id === id);
 
   parent.select('text')
+    .on('click', showChildren)
     .transition()
       .duration(700)
       .style('opacity', 1);
@@ -130,17 +146,18 @@ const LandingVisual = d3Wrap({
           .attr('stop-color', 'rgba(245, 245, 245, 0.95)');
 
         g = vis.append('g').attr('transform', 'translate(2,2)');
-
-        // Set borders of pack container, and padding between circles
       }
 
+      // Set borders of pack container, and padding between circles
       const pack = d3.pack()
-          .size([994, 994])
+          .size([794, 794])
           .padding(3);
 
       // Format data for packing
       let root;
       if (!initialized) {
+        // TODO: mark data as hidden on the data
+        initialData = { ...data };
         root = pack(d3.hierarchy({ ...data })
           .sum(d => d.count)
           .sort((a, b) => {
@@ -149,55 +166,84 @@ const LandingVisual = d3Wrap({
             return b.value - a.value;
           }));
       } else {
-        root = pack(d3.hierarchy({ ...data })
+        updateData(data);
+        root = pack(d3.hierarchy({ ...initialData })
           .sum(d => d.count)
           .sort((a, b) => {
-            const bVal = initialValues[b.data.id];
+            // Maintain original sorting order to minimize parent switching
             const aVal = initialValues[a.data.id];
-            if (!aVal) return 1;
-            if (!bVal) return -1;
+            const bVal = initialValues[b.data.id];
+            if (!aVal || !bVal) return 0;
             return bVal - aVal;
           }));
       }
-
-      // Apply data and classes
+      // ======================= Apply data ============================== //
       const node = g.selectAll('.node')
         .data(root.descendants());
 
+      // ======================== DEFINE UPDATE =========================== //
       node
         .transition()
           .duration(2000)
           .attr('transform', d => `translate(${d.x},${d.y})`);
 
       node.select('circle')
+        .filter(d => !d.children && state[d.parent.data.id].hidden)
+          .style('visibility', 'hidden')
+          .style('fill-opacity', 0)
+          .style('stroke-opacity', 0);
+
+      node.select('circle')
         .transition()
           .duration(2000)
           .attr('r', d => d.r);
 
-      node.select('text')
+      node.select('circle')
+        .filter(d => !d.children && !state[d.parent.data.id].hidden)
         .transition()
           .delay(1500)
+          .style('visibility', 'visible')
+          .style('fill-opacity', 1)
+          .style('stroke-opacity', 1);
+
+      node.select('text')
+        .filter(d => !d.children && state[d.parent.data.id].hidden)
+          .style('opacity', 0)
+          .style('visibility', 'hidden');
+
+      node.select('text')
+        .filter(d => !d.children && !state[d.parent.data.id].hidden)
+          .style('opacity', 1)
+          .style('visibility', 'visible');
+
+      node.select('text')
+        .transition()
+          .delay(1000)
           .text(d => d.data.name.substring(0, d.r / 3));
 
       node.select('title')
-        .transition()
-          .delay(1500)
-          .text(d => `${d.parent && d.parent.data.name} - ${d.data.name}\n${format(d.value)} Papers`);
+        .text(d =>
+          `${d.parent && d.parent.data.id !== 'root' ? d.parent.data.name + ' - ' : ''}\
+${d.data.name}\n${format(d.value)} Papers`);
 
+      // Remove old nodes
+      node.exit()
+        .remove();
+
+      // =========================== DEFINE ENTER ========================= //
+      // Apply classes to new nodes
       const newNodes = node.enter()
         .append('g')
         // eslint-disable-next-line no-nested-ternary
         .attr('class', d => (d.data.id === 'root' ? 'node' : (d.children ? 'middle node' : 'leaf node')))
         .attr('transform', d => `translate(${d.x},${d.y})`);
 
-      const oldNodes = node
-        .exit()
-        .remove();
-      console.log('removed', oldNodes);
 
       // Add titles for hover info
       newNodes.append('title')
-        .text(d => `${d.parent && d.parent.data.name} - ${d.data.name}\n${format(d.value)} Papers`);
+        .text(d =>
+          `${(d.parent && d.parent.data.id !== 'root') ? d.parent.data.name + ' - ' : ''}\
+${d.data.name}\n${format(d.value)} Papers`);
 
       const circles = newNodes.append('circle');
 
@@ -213,18 +259,9 @@ const LandingVisual = d3Wrap({
         .on('click', showChildren)
         .style('cursor', 'pointer');
 
-      // Swap handlers for parents with displayed children
-      circles.filter(d => state[d.data.id] && !state[d.data.id].hidden)
-        .on('click', hideChildren);
-
-      // Start with children hidden
+      // Start with children hidden -- get rid of this ??
       if (!initialized) {
         circles.filter(d => !d.children)
-          .style('visibility', 'hidden')
-          .style('fill-opacity', 0)
-          .style('stroke-opacity', 0);
-      } else {
-        circles.filter(d => !d.children && state[d.parent.data.id].hidden)
           .style('visibility', 'hidden')
           .style('fill-opacity', 0)
           .style('stroke-opacity', 0);
@@ -236,36 +273,27 @@ const LandingVisual = d3Wrap({
         .attr('dy', '0.3em')
         .text(d => d.data.name.substring(0, d.r / 3));
 
+      // Use larger font for general categories
       newNodes.filter(d => d.children)
         .select('text')
         .style('font-size', '18px')
         .style('fill', 'white');
 
-      // Hide parent text if children are not hidden
-      newNodes.filter(d => d.children && state[d.data.id] && !state[d.data.id].hidden)
-        .select('text')
-        .style('opacity', 0);
+      const leafText = newNodes.filter(d => !d.children)
+                             .select('text');
 
-      const leaves = newNodes.filter(d => !d.children)
-                         .select('text');
-
-      leaves
-        .attr('style', d =>
+      leafText.attr('style', d =>
           (d.r > 48 ? 'font-size: 12px' : 'font-size: 10px'));
 
       // Hide child text
       if (!initialized) {
-        leaves
-          .style('opacity', 0)
-          .style('visibility', 'hidden');
-      } else {
-        leaves.filter(d => state[d.parent.data.id].hidden)
+        leafText
           .style('opacity', 0)
           .style('visibility', 'hidden');
       }
 
-      if (!initialized) initialized = true;
-    } // else if ()
+      if (!initialized) initialized = true; // get rid of this ??
+    }
   },
   destroy() {
     d3.select('#d3root').selectAll('*').remove();
