@@ -54,8 +54,8 @@ class LandingPage extends Component {
       <div>
         <LandingVisual
           data={data}
-          width={1000}
-          height={1000}
+          width={800}
+          height={800}
           options={{
             rendered: initialized,
             setRendered,
