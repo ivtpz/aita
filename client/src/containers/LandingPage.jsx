@@ -63,9 +63,13 @@ class LandingPage extends Component {
           }}
         />
         <div style={styles.slideContainer}>
-          <div style={styles.sliderTitle}>
-            Papers published in <span style={styles.year}>{sliderValue}</span>
-          </div>
+          {sliderValue === currYear ?
+            <div style={styles.sliderTitle}>
+              Papers published between <span style={styles.year}>1995</span> and <span style={styles.year}>{currYear}</span>
+            </div> :
+            <div style={styles.sliderTitle}>
+              Papers published in <span style={styles.year}>{sliderValue}</span>
+            </div>}
           <Slider
             min={1995}
             step={1}
