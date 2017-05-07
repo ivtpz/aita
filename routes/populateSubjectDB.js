@@ -65,11 +65,11 @@ const request = async () => {
     const { ['OAI-PMH']: { ListRecords: { record, resumptionToken } } } = await x2js.xml2js(data);
     console.log('# records: ', record.length);
     resume = resumptionToken.toString();
-    fs.appendFile('log.txt', `token: ${resume}\n`);
+    fs.appendFile('/home/ivey/log.txt', `token: ${resume}\n`);
     console.log('token ', resume);
     return record;
   } catch (err) {
-    fs.appendFile('log.txt', `ERROR: ${err}\n`);
+    fs.appendFile('/home/ivey/log.txt', `ERROR: ${err}\n`);
     return [];
   }
 };
