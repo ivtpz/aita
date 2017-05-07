@@ -145,7 +145,6 @@ const zoom = (target) => {
 }
 
 const zoomTo = (v) => {
-  console.log('v ', v)
   if (v && Array.isArray(v) && !isNaN(v[0])) {
     const k = diameter / v[2];
     view = v;
