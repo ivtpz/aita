@@ -4,13 +4,15 @@ import dummy from '../helpers/dummyD3Data.json';
 
 console.log(dummy);
 
-let g;
+let g, vis, root, topLevel, circle;
 
 const initialValues = {};
 
 let lostChildren = {};
 
 let stateData;
+
+// =========================== HELPER FUNCTIONS ================== //
 
 const deepCloneAndHide = (data) => {
   if (typeof data !== 'object') return data;
@@ -84,7 +86,9 @@ const findAndUpdate = (id, update) => {
   }
 };
 
-// =========== TESTS FOR ELEMENT TYPE =========== //
+
+// =========== TESTS FOR ELEMENT TYPE ======================================= //
+
 const isRoot = d => d.data.id === 'root';
 
 const isNotRoot = d => d.data.id !== 'root';
@@ -100,6 +104,59 @@ const isLeaf = d => !d.children;
 const isHiddenChild = d => (isLeaf(d) || isSubMiddleNode(d)) && (d.parent.data.hidden);
 
 const isDisplayedChild = d => (isLeaf(d) || isSubMiddleNode(d)) && (!d.parent.data.hidden);
+
+// ================================= CLICK HANDLERS ============================ //
+
+//                 // ============== ZOOM DEFINITION ============== //
+let focus;
+let view;
+const margin = 5;
+const diameter = vis ? vis.attr('width') : 800;
+
+const zoom = (target) => {
+  focus = target;
+
+  topLevel.filter(d => !isRoot(d) && d.data.id === focus.data.id)
+    .on('click', hideChildren);
+
+  if (focus.data.id === 'root') {
+    d3.selectAll('.node')
+      .select('text')
+      .transition()
+      .delay(400)
+      .text(d => d.data.name.substring(0, d.r / 3));
+  } else {
+    d3.selectAll('.node')
+      .select('text')
+      .transition()
+      .delay(400)
+      .text(d => d.data.name.substring(0, d.r / 1.7));
+  }
+
+  d3.transition()
+    .duration(d3.event.altKey ? 7500 : 750)
+    .tween('zoom', function(d) {
+      var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
+      return function(t) {
+        zoomTo(i(t));
+      };
+    });
+
+}
+
+const zoomTo = (v) => {
+  console.log('v ', v)
+  if (v && Array.isArray(v) && !isNaN(v[0])) {
+    const k = diameter / v[2];
+    view = v;
+    if (topLevel) topLevel
+      .attr('transform', (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+    if (circle) circle
+      .attr('r', d => d.r * k);
+  }
+}
+
+// ================= SHOW AND HIDE =========================== //
 
 const showChildren = ({ data: { id } }) => {
   findAndUpdate(id, false);
@@ -140,13 +197,13 @@ const hideChildren = ({ data: { id } }) => {
     .filter(d => d.data.id === id);
 
   parent.select('text')
-    .on('click', showChildren)
+    .on('click', showAndZoom)
     .transition()
       .duration(700)
       .style('opacity', 1);
 
   parent.select('circle')
-    .on('click', showChildren);
+    .on('click', showAndZoom);
 
   const children = d3.selectAll('.node')
     .filter(d => d.parent && d.parent.data.id === id);
@@ -175,6 +232,18 @@ const hideChildren = ({ data: { id } }) => {
       .style('visibility', 'hidden');
 };
 
+const showAndZoom = (d) => {
+  showChildren(d);
+  zoom(d);
+};
+
+const hideAndZoom = (d) => {
+  hideChildren(d);
+  zoom(d);
+};
+
+// ================== D3 WRAPPER ==================== //
+
 const LandingVisual = d3Wrap({
   initialize(svg) {
     d3.select(svg).selectAll('*').remove();
@@ -186,13 +255,12 @@ const LandingVisual = d3Wrap({
         // initializeData({ ...data });
       } else {
         const rand = Math.floor(Math.random()*2)
-        console.log(rand)
         updateData({ ...dummy[rand] });
         // updateData({ ...data });
       }
 
       if (!g) {
-        const vis = d3.select(svg).attr('id', 'd3root');
+        vis = d3.select(svg).attr('id', 'd3root');
         // Append background gradient definitions
         const defs = vis
           .append('defs');
@@ -246,7 +314,6 @@ const LandingVisual = d3Wrap({
           .padding(3);
 
       // Format data for packing
-      let root;
       if (!Object.keys(initialValues).length) {
         root = pack(d3.hierarchy({ ...stateData })
           .sum(d => d.count)
@@ -256,10 +323,8 @@ const LandingVisual = d3Wrap({
             return b.value - a.value;
           }));
       } else {
-        const hi = d3.hierarchy({ ...stateData })
-        console.log('hrcy ', hi);
+        const hi = d3.hierarchy({ ...stateData });
         const hD = hi.sum(d => d.count);
-        console.log('pre pack ', hD)
         root = pack(
         hD.sort((a, b) => {
           // Maintain original sorting order to minimize parent switching
@@ -268,7 +333,6 @@ const LandingVisual = d3Wrap({
           if (!aVal || !bVal) return 0;
           return bVal - aVal;
         }));
-        console.log('packed ', root);
       }
 
       // ======================= Apply data ============================== //
@@ -282,7 +346,7 @@ const LandingVisual = d3Wrap({
       node
         .transition()
           .duration(2000)
-          .attr('transform', d => `translate(${d.x},${d.y})`);
+          .attr('transform', d => `translate(${800/2},${800/2})`);
 
       node.select('circle')
         .filter(isHiddenChild)
@@ -329,7 +393,7 @@ const LandingVisual = d3Wrap({
         .attr('fill', 'url(#subMiddleBackground)');
 
       subMidCircles.filter(d => d.data.hidden)
-        .on('click', showChildren);
+        .on('click', showAndZoom);
 
       subMidCircles.filter(d => !d.data.hidden)
         .on('click', hideChildren);
@@ -370,7 +434,7 @@ ${d.data.name}\n${format(d.value)} Papers`);
           if (d.children) return d.depth === 1 ? 'middle node' : 'sub-middle node';
           return 'leaf node';
         })
-        .attr('transform', d => `translate(${d.x},${d.y})`);
+        .attr('transform', d => `translate(${800/2},${800/2})`);
 
 
       // Add titles for hover info
@@ -390,9 +454,13 @@ ${d.data.name}\n${format(d.value)} Papers`);
           return 'url(#leafBackground)';
         });
 
+      // click handler for root
+      circles.filter(isRoot)
+        .on('click', zoom);
+
       // Click handlers for parents
       circles.filter(isClickableParent)
-        .on('click', showChildren)
+        .on('click', showAndZoom)
         .style('cursor', 'pointer');
 
       // Start with children hidden if parent has not been clicked
@@ -423,6 +491,10 @@ ${d.data.name}\n${format(d.value)} Papers`);
         .select('text')
         .style('opacity', 0)
         .style('visibility', 'hidden');
+
+      topLevel = g.selectAll('circle,text');
+      circle = g.selectAll('circle');
+      zoomTo([root.x, root.y, root.r * 2 + margin]);
     }
   },
   destroy() {
