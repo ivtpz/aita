@@ -4,6 +4,7 @@ import { urlencoded, json } from 'body-parser';
 import path from 'path';
 import morgan from 'morgan';
 import routes from './routes/routes';
+import populate from './routes/populateSubjectDB';
 
 const {
   findOrAddUser,
@@ -13,11 +14,12 @@ const {
   getArxivDataById,
   updateSubjectCount,
   getArxivSubjectCounts,
-  checkOrigin
+  checkOrigin,
+  addSubjectCount
 } = routes;
 
 const app = express();
-const port = process.env.PORT || 6543;
+const port = process.env.PORT || 1337;
 
 // const auth0 = new AuthenticationClient({
 //   clientId: '9ktoTjI4KL8e1qLEcTCY1SAd57LCpivK',
@@ -36,6 +38,7 @@ app.put('/user/remove', removeReference);
 // Arxiv data routes
 app.get('/arxiv/byid', getArxivDataById);
 app.get('/arxiv/subject', getArxivSubjectCounts);
+app.post('/arxiv/subject', populate);
 app.put('/arxiv/subject', updateSubjectCount);
 
 // Mail service route

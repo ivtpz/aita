@@ -9,6 +9,9 @@ const translate = {
   noPrefix: 'Other'
 };
 
+// TODO: astrophysics gets subdivided at some point - need to
+// divide up the data category
+
 const createHierarchy = (data) => {
   const tree = {
     name: 'All Subjects',

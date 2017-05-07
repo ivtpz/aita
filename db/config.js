@@ -21,7 +21,17 @@ const subjectCountSchema = new mongoose.Schema({
 
 const SubjectCounts = mongoose.model('SubjectCount', subjectCountSchema);
 
+const subjectCountYearSchema = new mongoose.Schema({
+  id: String,
+  name: String,
+  count: Number,
+  year: String
+});
+
+const SubjectCountYears = mongoose.model('SubjectCountYear', subjectCountYearSchema);
+
 export {
   Users,
-  SubjectCounts
+  SubjectCounts,
+  SubjectCountYears
 };

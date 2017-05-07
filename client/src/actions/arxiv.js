@@ -33,13 +33,31 @@ const setSearchPage = page => ({
   payload: { page }
 });
 
+const setArxivFetching = fetching => ({
+  type: 'SET_ARXIV_FETCHING',
+  payload: { fetching }
+});
+
+const setLastYearRetreived = metaDataYear => ({
+  type: 'SET_LAST_YEAR_RETREIVED',
+  payload: { metaDataYear }
+});
+
 const receiveSubjectCountData = metaData => ({
   type: 'RECEIVE_SUBJECT_METADATA',
   payload: { metaData }
 });
 
-const getSubjectCountData = () => async (dispatch) => {
-  const { data } = await get('/arxiv/subject');
+const getSubjectCountData = metaDataYear => async (dispatch) => {
+  dispatch(setArxivFetching(true));
+  const apiUrl = '/arxiv/subject';
+  const params = {};
+  if (metaDataYear && parseInt(metaDataYear, 10) !== new Date().getFullYear()) {
+    params.year = metaDataYear;
+  }
+  const { data } = await get(apiUrl, { params });
+  dispatch(setArxivFetching(false));
+  dispatch(setLastYearRetreived(metaDataYear));
   dispatch(receiveSubjectCountData(createHierarchy(data)));
 };
 
@@ -74,5 +92,6 @@ export {
   setSearchPage,
   setSearchCategory,
   setSearchSort,
-  getSubjectCountData
+  getSubjectCountData,
+  setArxivFetching
 };

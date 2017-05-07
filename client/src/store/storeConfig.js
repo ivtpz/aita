@@ -5,7 +5,9 @@ import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers/index';
 
 const loggerMiddleware = createLogger({
-  predicate: (_, action) => action.type !== 'SET_SCROLL_LOCATION'
+  predicate: (_, action) =>
+    action.type !== 'SET_SCROLL_LOCATION'
+    && action.type !== 'UPDATE_D3_YEAR_SLIDER'
 });
 
 /* eslint-disable no-underscore-dangle */
