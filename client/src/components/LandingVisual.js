@@ -141,7 +141,6 @@ const zoom = (target) => {
         zoomTo(i(t));
       };
     });
-
 }
 
 const zoomTo = (v) => {
@@ -149,7 +148,7 @@ const zoomTo = (v) => {
     const k = diameter / v[2];
     view = v;
     if (topLevel) topLevel
-      .attr('transform', (d) => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+      .attr('transform', d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
     if (circle) circle
       .attr('r', d => d.r * k);
   }
@@ -250,12 +249,12 @@ const LandingVisual = d3Wrap({
   update(svg, data) {
     if (data.children && data.children.length) {
       if (!stateData) {
-        initializeData({ ...dummy[0] });
-        // initializeData({ ...data });
+        // initializeData({ ...dummy[0] });
+        initializeData({ ...data });
       } else {
         const rand = Math.floor(Math.random()*2)
-        updateData({ ...dummy[rand] });
-        // updateData({ ...data });
+        // updateData({ ...dummy[rand] });
+        updateData({ ...data });
       }
 
       if (!g) {
@@ -493,7 +492,11 @@ ${d.data.name}\n${format(d.value)} Papers`);
 
       topLevel = g.selectAll('circle,text');
       circle = g.selectAll('circle');
-      zoomTo([root.x, root.y, root.r * 2 + margin]);
+      if (!view) {
+        zoomTo([root.x, root.y, root.r * 2 + margin]);
+      } else {
+        zoom(view)
+      }
     }
   },
   destroy() {
