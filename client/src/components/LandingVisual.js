@@ -32,6 +32,45 @@ const deepCloneAndHide = (data) => {
 
 const initializeData = (data) => {
   stateData = deepCloneAndHide(data);
+  // TEMP FIX: add in astrophysics
+  const physics = stateData.children.find(d => d.id === 'noPrefix');
+  physics.children.push({
+    id: 'astro-ph',
+    name: 'Astrophysics',
+    count: 0
+  });
+  lostChildren['astro-ph'] = [
+    {
+      id: 'astro-ph.GA',
+      name: 'Astrophysics of Galaxies',
+      count: 0
+    },
+    {
+      id: 'astro-ph.CO',
+      name: 'Cosmology and Nongalactic Astrophysics',
+      count: 0
+    },
+    {
+      id: 'astro-ph.EP',
+      name: 'Earth and Planetary Astrophysics',
+      count: 0
+    },
+    {
+      id: 'astro-ph.HE',
+      name: 'High Energy Astophysical Phenomena',
+      count: 0
+    },
+    {
+      id: 'astro-ph.IM',
+      name: 'Instrumentation and Methods for Astrophysics',
+      count: 0
+    },
+    {
+      id: 'astro-ph.SR',
+      name: 'Solar and Stellar Astrophysics',
+      count: 0
+    }
+  ];
 };
 
 const updateData = (newData, state = stateData) => {
@@ -186,7 +225,6 @@ const LandingVisual = d3Wrap({
         initializeData({ ...data });
       } else {
         const rand = Math.floor(Math.random()*2)
-        console.log(rand)
         // updateData({ ...dummy[rand] });
         updateData({ ...data });
       }
@@ -257,9 +295,7 @@ const LandingVisual = d3Wrap({
           }));
       } else {
         const hi = d3.hierarchy({ ...stateData })
-        console.log('hrcy ', hi);
         const hD = hi.sum(d => d.count);
-        console.log('pre pack ', hD)
         root = pack(
         hD.sort((a, b) => {
           // Maintain original sorting order to minimize parent switching
@@ -316,13 +352,15 @@ const LandingVisual = d3Wrap({
         .on('click', () => true)
         .attr('fill', 'url(#leafBackground)');
 
-      node.filter(isSubMiddleNode)
-        .select('text')
+      const subMiddleNodes = node.filter(isSubMiddleNode);
+
+      subMiddleNodes.attr('class', 'sub-middle node');
+
+      subMiddleNodes.select('text')
         .style('font-size', '18px')
         .style('fill', 'white');
 
-      const subMidCircles = node.select('circle')
-        .filter(isSubMiddleNode);
+      const subMidCircles = subMiddleNodes.select('circle');
 
       subMidCircles
         .style('cursor', 'pointer')
