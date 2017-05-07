@@ -35,10 +35,10 @@ class LandingPage extends Component {
   }
 
   componentWillReceiveProps({ dragging, sliderValue }) {
-    const { prevSliderValue } = this.props;
-    if (!dragging && prevSliderValue !== sliderValue) {
+    const { prevSliderValue, isFetching, fetch } = this.props;
+    if (!isFetching && !dragging && prevSliderValue !== sliderValue) {
       console.log('SHOULD FETCH DATA for ', sliderValue);
-      this.props.fetch(sliderValue);
+      fetch(sliderValue);
     }
   }
 
@@ -88,6 +88,7 @@ class LandingPage extends Component {
 
 const mapStateToProps = state => ({
   data: state.arxiv.metaData,
+  isFetching: state.arxiv.fetching,
   prevSliderValue: state.arxiv.metaDataYear,
   initialized: state.d3.initialized,
   sliderValue: state.materialUi.slider.value,
