@@ -15,7 +15,19 @@ svg#d3root {
 }
 
 .node.middle circle {
-  stroke: rgb(51, 167, 194);
+  stroke: rgb(77, 194, 202);
+}
+
+.node.sub-middle circle {
+  stroke: rgb(49, 150, 190);
+}
+
+.node.middle circle:hover {
+  stroke: gray;
+}
+
+.node.sub-middle circle:hover {
+  stroke: darkslategray;
 }
 
 .node.leaf circle {
