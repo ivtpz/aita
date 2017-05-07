@@ -182,13 +182,13 @@ const LandingVisual = d3Wrap({
   update(svg, data) {
     if (data.children && data.children.length) {
       if (!stateData) {
-        initializeData({ ...dummy[0] });
-        // initializeData({ ...data });
+        // initializeData({ ...dummy[0] });
+        initializeData({ ...data });
       } else {
         const rand = Math.floor(Math.random()*2)
         console.log(rand)
-        updateData({ ...dummy[rand] });
-        // updateData({ ...data });
+        // updateData({ ...dummy[rand] });
+        updateData({ ...data });
       }
 
       if (!g) {
@@ -225,10 +225,10 @@ const LandingVisual = d3Wrap({
 
         subMiddleGrad.append('stop')
           .attr('offset', '30%')
-          .attr('stop-color', 'rgba(49, 135, 180, .9)');
+          .attr('stop-color', 'rgba(49, 135, 180, .95)');
         subMiddleGrad.append('stop')
           .attr('offset', '95%')
-          .attr('stop-color', 'rgba(51, 167, 194, 0.95)');
+          .attr('stop-color', 'rgba(51, 150, 187, 0.92)');
 
         leafGrad.append('stop')
           .attr('offset', '10%')
