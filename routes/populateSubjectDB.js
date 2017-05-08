@@ -8,8 +8,25 @@ const url = 'http://export.arxiv.org/oai2';
 
 const x2js = new X2JS();
 
-let resume = '1720817|151001';
+let resume = '1720817|846001';
 
+const findCat = (catList) => {
+  console.log('searching ', catList);
+  let found = false;
+  let name, id;
+  while (catList.length && !found) {
+    const curr = catList.shift();
+    const lookups = curr.split('.');
+    if (lookups.length === 1) lookups.unshift('noPrefix');
+    const general = cats[lookups[0]];
+    name = general && general[lookups[1]];
+    if (name) {
+      found = true;
+      id = lookups.join('.');
+    }
+  }
+  return { name, id };
+};
 
 const processData = async () => {
   console.log('processing...')
@@ -19,12 +36,8 @@ const processData = async () => {
       const { metadata: { arXiv: { created, categories } } } = r;
       console.log('processing ', created, categories);
       const year = created.slice(0, 4);
-      const cat = categories.split(' ')[0];
-      const lookUp = cat.split('.');
-      if (lookUp.length === 1) lookUp.unshift('noPrefix');
-      const id = lookUp.join('.');
-      const general = cats[lookUp[0]];
-      const name = general && general[lookUp[1]];
+      const cat = categories.split(' ');
+      const { name, id } = findCat(cat);
       if (name) {
         console.log('Saving ', cat, year, name, id);
         const dbRecord = await SubjectCountYears.findOne({ id, year }).exec();
@@ -37,7 +50,7 @@ const processData = async () => {
           console.log('added new category and year: ', entry);
         }
       } else {
-        console.log('could not save ', name);
+        console.log('could not save name ', name, 'with id ', id);
       }
     }
   }
