@@ -37,7 +37,8 @@ const initializeData = (data) => {
   physics.children.push({
     id: 'astro-ph',
     name: 'Astrophysics',
-    count: 0
+    count: 0,
+    hidden: true
   });
   lostChildren['astro-ph'] = [
     {
