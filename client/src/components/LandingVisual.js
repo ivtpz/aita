@@ -6,6 +6,8 @@ console.log(dummy);
 
 let g, vis, root, topLevel, circle;
 
+let currRadius = 400;
+
 const initialValues = {};
 
 let lostChildren = {};
@@ -111,12 +113,14 @@ const isDisplayedChild = d => (isLeaf(d) || isSubMiddleNode(d)) && (!d.parent.da
 let focus;
 let view;
 const margin = 5;
-const diameter = vis ? vis.attr('width') : 800;
+const diameter = vis ? vis.attr('width') : currRadius * 2;
 
 const zoom = (target) => {
   focus = target;
-
-  topLevel.filter(d => !isRoot(d) && d.data.id === focus.data.id)
+  console.log(focus)
+  topLevel.filter(d => {
+    !isRoot(d) && d.data.id === focus.data.id
+  })
     .on('click', hideChildren);
 
   if (focus.data.id === 'root') {
@@ -134,7 +138,7 @@ const zoom = (target) => {
   }
 
   d3.transition()
-    .duration(d3.event.altKey ? 7500 : 750)
+    .duration(d3.event && d3.event.altKey ? 7500 : 750)
     .tween('zoom', function(d) {
       var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
       return function(t) {
@@ -144,6 +148,7 @@ const zoom = (target) => {
 }
 
 const zoomTo = (v) => {
+  //currRadius = v[2] / 2;
   if (v && Array.isArray(v) && !isNaN(v[0])) {
     const k = diameter / v[2];
     view = v;
@@ -231,6 +236,7 @@ const hideChildren = ({ data: { id } }) => {
 };
 
 const showAndZoom = (d) => {
+  console.log('show and zoom')
   showChildren(d);
   zoom(d);
 };
@@ -341,10 +347,7 @@ const LandingVisual = d3Wrap({
 
       // ======================== DEFINE UPDATE =========================== //
 
-      node
-        .transition()
-          .duration(2000)
-          .attr('transform', d => `translate(${800/2},${800/2})`);
+      node.attr('transform', d => `translate(${currRadius},${currRadius})`);
 
       node.select('circle')
         .filter(isHiddenChild)
@@ -432,7 +435,7 @@ ${d.data.name}\n${format(d.value)} Papers`);
           if (d.children) return d.depth === 1 ? 'middle node' : 'sub-middle node';
           return 'leaf node';
         })
-        .attr('transform', d => `translate(${800/2},${800/2})`);
+        .attr('transform', d => `translate(${currRadius},${currRadius})`);
 
 
       // Add titles for hover info
@@ -495,7 +498,9 @@ ${d.data.name}\n${format(d.value)} Papers`);
       if (!view) {
         zoomTo([root.x, root.y, root.r * 2 + margin]);
       } else {
-        zoom(view)
+        //console.log('not zooming to ', view)
+        const prevView = view;
+        zoom(root);
       }
     }
   },
