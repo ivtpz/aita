@@ -1,107 +1,85 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Slider from 'material-ui/Slider';
+import Radium from 'radium';
 import LandingVisual from '../components/LandingVisual';
-
-import { getSubjectCountData } from '../actions/arxiv';
-import { initialize, destroy } from '../actions/d3Actions';
-import { updateD3YearSlider, setSliderDrag } from '../actions/materialUi';
-
+import ConnectionsVisual from '../components/ConnectionsVisual';
 import { colors } from '../theme/colors';
 
 const styles = {
-  slideContainer: {
+  container: {
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20
+    flexDirection: 'row',
+    justifyContent: 'space-around'
   },
-  slider: {
-    width: '65%'
-  },
-  sliderTitle: {
+  icon: {
+    fontSize: '5em',
     color: colors.PrimaryDark
   },
-  year: {
-    color: colors.PrimaryBright
+  disabled: {
+    color: colors.NeutralDark
+  },
+  iconContainer: {
+    flexBasis: 200,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  active: {
+    ':hover': {
+      backgroundColor: colors.NeutralLight,
+      cursor: 'pointer'
+    }
   }
 };
 
 class LandingPage extends Component {
-
-  componentDidMount() {
-    this.props.fetch(this.props.sliderValue);
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeVisualIndex: 0,
+      totalVisuals: 2
+    };
   }
 
-  componentWillReceiveProps({ dragging, sliderValue }) {
-    const { prevSliderValue, isFetching, fetch } = this.props;
-    if (!isFetching && !dragging && prevSliderValue !== sliderValue) {
-      console.log('SHOULD FETCH DATA for ', sliderValue);
-      fetch(sliderValue);
-    }
-  }
+  moveLeft = () => {
+    const activeVisualIndex = Math.max(0, this.state.activeVisualIndex - 1);
+    this.setState({ activeVisualIndex });
+  };
+
+  moveRight = () => {
+    const activeVisualIndex =
+      Math.min(this.state.totalVisuals - 1, this.state.activeVisualIndex + 1);
+    this.setState({ activeVisualIndex });
+  };
 
   render() {
-    const {
-      data, initialized,
-      setRendered, setDestroyed,
-      sliderValue, handleSlide,
-      handleDragStart, handleDragStop
-    } = this.props;
-    const currYear = new Date().getFullYear();
+    const visuals = [<LandingVisual />, <ConnectionsVisual />];
+    const canMoveRight = this.state.activeVisualIndex < this.state.totalVisuals - 1;
+    const canMoveLeft = this.state.activeVisualIndex > 0;
+    const { container, iconContainer, icon, disabled, active } = styles;
     return (
-      <div>
-        <LandingVisual
-          data={data}
-          width={800}
-          height={800}
-          options={{
-            rendered: initialized,
-            setRendered,
-            setDestroyed
-          }}
-        />
-        <div style={styles.slideContainer}>
-          {sliderValue === currYear ?
-            <div style={styles.sliderTitle}>
-              Papers published between <span style={styles.year}>1995</span> and <span style={styles.year}>{currYear}</span>
-            </div> :
-            <div style={styles.sliderTitle}>
-              Papers published in <span style={styles.year}>{sliderValue}</span>
-            </div>}
-          <Slider
-            min={1995}
-            step={1}
-            max={currYear}
-            value={sliderValue}
-            onChange={handleSlide}
-            onDragStop={handleDragStop}
-            onDragStart={handleDragStart}
-            style={styles.slider}
-          />
+      <div style={container}>
+        <div
+          style={canMoveLeft ? [iconContainer, active] : iconContainer}
+          onClick={this.moveLeft}
+          key="left">
+          <i
+            className="fa fa-caret-left"
+            style={canMoveLeft ? icon : [icon, disabled]}></i>
+        </div>
+        {visuals[this.state.activeVisualIndex]}
+        <div
+          style={canMoveRight ? [iconContainer, active] : iconContainer}
+          onClick={this.moveRight}
+          key="right">
+          <i
+            className="fa fa-caret-right"
+            style={canMoveRight ? icon : [icon, disabled]}></i>
         </div>
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  data: state.arxiv.metaData,
-  isFetching: state.arxiv.fetching,
-  prevSliderValue: state.arxiv.metaDataYear,
-  initialized: state.d3.initialized,
-  sliderValue: state.materialUi.slider.value,
-  dragging: state.materialUi.slider.dragging
-});
 
-const mapDispatchToProps = dispatch => ({
-  fetch: year => dispatch(getSubjectCountData(year)),
-  setRendered: () => dispatch(initialize()),
-  setDestroyed: () => dispatch(destroy()),
-  handleSlide: (e, value) => dispatch(updateD3YearSlider(value)),
-  handleDragStart: () => dispatch(setSliderDrag(true)),
-  handleDragStop: () => dispatch(setSliderDrag(false))
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
+export default Radium(LandingPage);
