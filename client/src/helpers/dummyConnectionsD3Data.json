@@ -1,0 +1,135 @@
+{
+  "nodes": [
+    {
+      "id": "Adam",
+      "group": 1
+    },    
+    {
+      "id": "Ivey",
+      "group": 1
+    },
+    {
+      "id": "John",
+      "group": 1
+    },
+    {
+      "id": "Mike",
+      "group": 1
+    },
+    {
+      "id": "Luke",
+      "group": 2
+    },
+    {
+      "id": "Paul",
+      "group": 2
+    },
+    {
+      "id": "Carrie",
+      "group": 3
+    },
+    {
+      "id": "Erica",
+      "group": 3
+    },
+    {
+      "id": "Kat",
+      "group": 3
+    },
+    {
+      "id": "Phil",
+      "group": 4
+    },
+    {
+      "id": "Anna-Sophie",
+      "group": 4
+    }
+  ],
+  "links": [
+    {
+      "source": "Adam",
+      "target": "Ivey",
+      "value": 10
+    },
+    {
+      "source": "Ivey",
+      "target": "Erica",
+      "value": 7
+    },
+    {
+      "source": "John",
+      "target": "Mike",
+      "value": 12
+    },
+    {
+      "source": "Mike",
+      "target": "Luke",
+      "value": 11
+    },
+    {
+      "source": "Kat",
+      "target": "Luke",
+      "value": 12
+    },
+    {
+      "source": "Mike",
+      "target": "Ivey",
+      "value": 6
+    },
+    {
+      "source": "Mike",
+      "target": "Adam",
+      "value": 9
+    },
+    {
+      "source": "John",
+      "target": "Paul",
+      "value": 3
+    },
+    {
+      "source": "Luke",
+      "target": "Paul",
+      "value": 14
+    },
+    {
+      "source": "Paul",
+      "target": "Carrie",
+      "value": 2
+    },
+    {
+      "source": "Carrie",
+      "target": "Erica",
+      "value": 17
+    },
+    {
+      "source": "Carrie",
+      "target": "Kat",
+      "value": 11
+    },
+    {
+      "source": "Erica",
+      "target": "Kat",
+      "value": 10
+    },
+    {
+      "source": "Kat",
+      "target": "Phil",
+      "value": 3
+    },
+    {
+      "source": "Phil",
+      "target": "Erica",
+      "value": 2
+    },
+    {
+      "source": "Phil",
+      "target": "Anna-Sophie",
+      "value": 9
+    },
+    {
+      "source": "Phil",
+      "target": "Ivey",
+      "value": 2
+    }
+  ]
+}
