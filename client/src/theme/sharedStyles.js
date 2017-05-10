@@ -1,3 +1,5 @@
+import { colors } from './colors';
+
 const main = {
   display: 'flex',
   flexDirection: 'column',
@@ -24,8 +26,28 @@ const resultsContainer = {
   alignItems: 'flex-start'
 };
 
+const inputStyle = {
+  ariaHidden: true,
+  padding: '4px 5px 0 5px',
+  borderRadius: 4,
+  fontSize: 18,
+  border: `1px solid ${colors.NeutralDark}`
+};
+
+const searchIcon = {
+  position: 'relative',
+  fontSize: '1.2em',
+  zIndex: 1,
+  left: -25,
+  top: -1,
+  color: colors.PrimaryDark,
+  cursor: 'pointer'
+};
+
 export {
   main,
+  inputStyle,
   searchBox,
+  searchIcon,
   resultsContainer
 };
