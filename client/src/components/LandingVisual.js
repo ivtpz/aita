@@ -1,5 +1,13 @@
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Slider from 'material-ui/Slider';
 import * as d3 from 'd3';
 import d3Wrap from 'react-d3-wrap';
+
+import { getSubjectCountData } from '../actions/arxiv';
+import { updateD3YearSlider, setSliderDrag } from '../actions/materialUi';
+import { colors } from '../theme/colors';
+
 import dummy from '../helpers/dummyD3Data.json';
 
 console.log(dummy);
@@ -465,8 +473,102 @@ ${d.data.name}\n${format(d.value)} Papers`);
     }
   },
   destroy() {
+    g = undefined;
+    console.log('destroyed');
+    // TODO: unmount component on destroy
     d3.select('#d3root').selectAll('*').remove();
   }
 });
 
-export default LandingVisual;
+// Controls and visual
+
+const styles = {
+  slideContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20
+  },
+  slider: {
+    width: '95%'
+  },
+  sliderTitle: {
+    color: colors.PrimaryDark
+  },
+  year: {
+    color: colors.PrimaryBright
+  }
+};
+
+class LandingVisualPage extends Component {
+
+  componentDidMount() {
+    this.props.fetch(this.props.sliderValue);
+  }
+
+  componentWillReceiveProps({ dragging, sliderValue }) {
+    const { prevSliderValue, isFetching, fetch } = this.props;
+    if (!isFetching && !dragging && prevSliderValue !== sliderValue) {
+      console.log('SHOULD FETCH DATA for ', sliderValue);
+      fetch(sliderValue);
+    }
+  }
+
+  componentWillUnmount() {
+    console.log('unmounting')
+  }
+
+  render() {
+    const {
+      data, sliderValue, handleSlide,
+      handleDragStart, handleDragStop
+    } = this.props;
+    const currYear = new Date().getFullYear();
+    return (
+      <div>
+        <LandingVisual
+          data={data}
+          width={800}
+          height={800}
+        />
+        <div style={styles.slideContainer}>
+          {sliderValue === currYear ?
+            <div style={styles.sliderTitle}>
+              Papers published between <span style={styles.year}>1995</span> and <span style={styles.year}>{currYear}</span>
+            </div> :
+            <div style={styles.sliderTitle}>
+              Papers published in <span style={styles.year}>{sliderValue}</span>
+            </div>}
+          <Slider
+            min={1995}
+            step={1}
+            max={currYear}
+            value={sliderValue}
+            onChange={handleSlide}
+            onDragStop={handleDragStop}
+            onDragStart={handleDragStart}
+            style={styles.slider}
+          />
+        </div>
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  data: state.arxiv.metaData,
+  isFetching: state.arxiv.fetching,
+  prevSliderValue: state.arxiv.metaDataYear,
+  sliderValue: state.materialUi.slider.value,
+  dragging: state.materialUi.slider.dragging
+});
+
+const mapDispatchToProps = dispatch => ({
+  fetch: year => dispatch(getSubjectCountData(year)),
+  handleSlide: (e, value) => dispatch(updateD3YearSlider(value)),
+  handleDragStart: () => dispatch(setSliderDrag(true)),
+  handleDragStop: () => dispatch(setSliderDrag(false))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LandingVisualPage);
