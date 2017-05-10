@@ -34,6 +34,16 @@ svg#d3root {
   stroke: rgba(255, 255, 255, 0.9);
 }
 
+.link {
+  stroke: gray;
+  stroke-opacity: 0.6;
+}
+
+.connection-node {
+  stroke: white;
+  stroke-width: 1.5px;
+}
+
 text {
   font-style: sans-serif;
   text-anchor: middle;
