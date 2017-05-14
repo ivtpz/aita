@@ -10,6 +10,18 @@ const translate = {
   'astro-ph': 'Astrophysics'
 };
 
+const groups = {
+  math: 6,
+  physics: 3,
+  stat: 7,
+  'q-bio': 9,
+  cs: 8,
+  nlin: 5,
+  'cond-mat': 4,
+  noPrefix: 1,
+  'astro-ph': 2
+};
+
 const physicsSubCats = ['physics', 'nlin', 'cond-mat', 'astro-ph'];
 
 const addChild = (tree, general, name, count, id) => {
@@ -28,7 +40,7 @@ const addChild = (tree, general, name, count, id) => {
 // TODO: astrophysics gets subdivided at some point - need to
 // divide up the data category
 
-const createHierarchy = (data) => {
+export const createHierarchy = (data) => {
   const tree = {
     name: 'All Subjects',
     id: 'root',
@@ -60,6 +72,72 @@ const createHierarchy = (data) => {
     }
   });
   return tree;
+};
+
+const deepClone = (data) => {
+  if (typeof data !== 'object') return data;
+  let clone;
+  if (!Array.isArray(data)) {
+    clone = {};
+    Object.keys(data).forEach((k) => {
+      clone[k] = deepClone(data[k]);
+    });
+  } else {
+    clone = [];
+    data.forEach(d => clone.push(deepClone(d)));
+  }
+  return clone;
+};
+
+const getMainSubject = (papers) => {
+  console.log('need to get main subject from: ', papers)
+  const count = {};
+  papers.forEach((p) => {
+    const catName = p.category._term.split('.');
+    const category = catName.length === 1 ? 'noPrefix' : catName[0];
+    count[category] = count[category] ? count[category] + 1 : 1;
+  });
+  console.log('counts: ', count);
+  return Object.keys(count).sort((a, b) => count[b] - count[a])[0];
+};
+
+/**
+ * Takes in previous authors and papers, and adds
+ * connections for new author
+ * @param {{nodes: {id: string, group: number}[], links: Object[]}} prevData
+ * @param {{id: string, paperData: {id: string, category: object}[]}} newAuthor
+ * @return {Object} - same form as prevData
+ */
+export const formatConnections = (prevData, newAuthor) => {
+  let newData = {};
+  console.log('prev data ', prevData)
+  if (!prevData.nodes || !prevData.links) {
+    newData = {
+      nodes: [],
+      links: []
+    };
+  } else {
+    newData = deepClone(prevData);
+    prevData.nodes.forEach((author) => {
+      const value = newAuthor.paperData.reduce((connects, paper) =>
+        (author.paperData.indexOf(paper.id) > -1 ? connects + 1 : connects)
+      , 0);
+      if (value) {
+        newData.links.push({
+          source: newAuthor.id,
+          target: author.id,
+          value
+        });
+      }
+    });
+  }
+  newData.nodes.push({
+    ...newAuthor,
+    paperData: newAuthor.paperData.map(p => p.id),
+    group: groups[getMainSubject(newAuthor.paperData)]
+  });
+  console.log('formatted: ', newData)
+  return newData;
 };
 
 export default createHierarchy;

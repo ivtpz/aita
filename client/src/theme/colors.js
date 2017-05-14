@@ -35,6 +35,10 @@ export const theme = {
   snackbar: {
     textColor: white,
     actionColor: colors.Mint
+  },
+  raisedButton: {
+    color: colors.Mint,
+    textColor: colors.PrimaryDark
   }
 };
 

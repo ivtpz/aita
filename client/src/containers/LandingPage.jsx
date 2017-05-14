@@ -35,7 +35,7 @@ class LandingPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeVisualIndex: 0,
+      activeVisualIndex: 1,
       totalVisuals: 2
     };
   }
