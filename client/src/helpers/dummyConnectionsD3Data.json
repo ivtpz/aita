@@ -3,7 +3,7 @@
     "nodes": [
       {
         "id": "Adam",
-        "group": 1,
+        "group": [1, 5],
         "paperData": [
           1,
           2,
@@ -14,7 +14,7 @@
       },
       {
         "id": "Ivey",
-        "group": 1,
+        "group": [1, 1],
         "paperData": [
           1,
           2,
@@ -23,7 +23,7 @@
       },
       {
         "id": "John",
-        "group": 1,
+        "group": [2, 1],
         "paperData": [
           1,
           2,
@@ -38,7 +38,7 @@
       },
       {
         "id": "Mike",
-        "group": 1,
+        "group": [1, 9],
         "paperData": [
           1,
           2
@@ -46,7 +46,7 @@
       },
       {
         "id": "Luke",
-        "group": 2,
+        "group": [2, 0],
         "paperData": [
           1,
           2,
@@ -59,7 +59,7 @@
       },
       {
         "id": "Paul",
-        "group": 2,
+        "group": [2, 5],
         "paperData": [
           1,
           2,
@@ -70,7 +70,7 @@
       },
       {
         "id": "Carrie",
-        "group": 3,
+        "group": [3, 1],
         "paperData": [
           1,
           2,
@@ -133,7 +133,7 @@
     "nodes": [
       {
         "id": "Adam",
-        "group": 1,
+        "group": [1, 4],
         "paperData": [
           1,
           2,
@@ -144,7 +144,7 @@
       },
       {
         "id": "Ivey",
-        "group": 1,
+        "group": [1, 6],
         "paperData": [
           1,
           2,
@@ -153,7 +153,7 @@
       },
       {
         "id": "John",
-        "group": 1,
+        "group": [1, 8],
         "paperData": [
           1,
           2,
@@ -168,7 +168,7 @@
       },
       {
         "id": "Mike",
-        "group": 1,
+        "group": [1, 9],
         "paperData": [
           1,
           2
@@ -176,7 +176,7 @@
       },
       {
         "id": "Luke",
-        "group": 2,
+        "group": [2, 0],
         "paperData": [
           1,
           2,
@@ -189,7 +189,7 @@
       },
       {
         "id": "Paul",
-        "group": 2,
+        "group": [5, 5],
         "paperData": [
           1,
           2,
@@ -200,7 +200,7 @@
       },
       {
         "id": "Carrie",
-        "group": 3,
+        "group": [6, 20],
         "paperData": [
           1,
           2,
@@ -217,7 +217,7 @@
       },
       {
         "id": "Erica",
-        "group": 3,
+        "group": [7, 5],
         "paperData": [
           1,
           2,
@@ -228,7 +228,7 @@
       },
       {
         "id": "Kat",
-        "group": 3,
+        "group": [8, 15],
         "paperData": [
           1,
           2,
@@ -237,7 +237,7 @@
       },
       {
         "id": "Phil",
-        "group": 4,
+        "group": [8, 32],
         "paperData": [
           1,
           2,
@@ -250,7 +250,7 @@
       },
       {
         "id": "Anna-Sophie",
-        "group": 4,
+        "group": [9, 2],
         "paperData": [
           1,
           2,
