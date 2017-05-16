@@ -1,7 +1,7 @@
 import { get } from 'axios';
 import X2JS from 'x2js';
 import { createHierarchy, formatConnections } from '../helpers/arxivDataFormatting';
-import dummyData from '../helpers/dummyArxivData';
+// import dummyData from '../helpers/dummyArxivData';
 
 const x2js = new X2JS();
 
@@ -73,40 +73,38 @@ const getSubjectCountData = metaDataYear => async (dispatch) => {
 
 const ensureAuthorWrotePaper = (author, paper) => {
   const data = paper.author;
-  console.log(author, data)
   if (Array.isArray(data)) {
     return !!data.find(l => l.name === author);
   }
   return author === data.name;
 };
 
-const getConnectionDataByAuthor = (query, replaceCoAuthors) => async (dispatch, getState) => {
-  console.log(replaceCoAuthors)
+const getConnectionDataByAuthor = (query, replaceCoAuthors) =>
+async (dispatch, getState) => { // eslint-disable-line
   const arxivState = getState().arxiv;
   const authorName = query || arxivState.authorQuery.trim();
-  const id = authorName.split(' ').map(n => n[0].toUpperCase() + n.slice(1)).join(' ');
+  const name = authorName.split(' ').map(n => n[0].toUpperCase() + n.slice(1)).join(' ');
   const { searchedAuthors } = arxivState;
-  if (!searchedAuthors.has(id)) {
-    console.log('searching.. ', id);
-    dispatch(addSearchedAuthor(id));
-    const formattedName = id.split(' ').join(' AND ');
+  if (!searchedAuthors.has(name)) {
+    dispatch(addSearchedAuthor(name));
+    const formattedName = name.split(' ').join(' AND ');
+
     const params = {
       search_query: `au:${formattedName}`,
       max_results: 30
     };
     const { data } = await get(url, { params });
     const { feed: { entry } } = x2js.xml2js(data);
+
     const state = getState();
     const prevData = state.arxiv.authorConnectionData;
     const alreadySearched = state.arxiv.searchedAuthors;
     let coAuthors = replaceCoAuthors ? [] : state.arxiv.coAuthors;
-    //console.log(coAuthors)
     const paperData = entry
-      .filter(ensureAuthorWrotePaper.bind(null, id))
-      .map((e) => {
-        console.log(e)
-        if (Array.isArray(e.author)) {
-          e.author.forEach((a) => {
+      .filter(ensureAuthorWrotePaper.bind(null, name))
+      .map(({ author, id, primary_category }) => {
+        if (Array.isArray(author)) {
+          author.forEach((a) => {
             // TODO: replace with regex
             if (!authorName.toLowerCase().includes(a.name.toLowerCase())
             && !alreadySearched.has(a.name)) {
@@ -114,10 +112,7 @@ const getConnectionDataByAuthor = (query, replaceCoAuthors) => async (dispatch, 
             }
           });
         }
-        return {
-          id: e.id,
-          category: e.primary_category
-        };
+        return { id, category: primary_category };
       });
     dispatch({
       type: 'SET_NEXT_COAUTHORS',
@@ -126,11 +121,10 @@ const getConnectionDataByAuthor = (query, replaceCoAuthors) => async (dispatch, 
     return dispatch({
       type: 'RECEIVE_NEW_AUTHOR_CONNECTION_DATA',
       payload: {
-        authorConnectionData: formatConnections(prevData, { id, paperData })
+        authorConnectionData: formatConnections(prevData, { id: name, paperData })
       }
     });
   }
-  console.log(`already searched ${authorName}`);
 };
 
 const getCoAuthorData = () => (dispatch, getState) => {
