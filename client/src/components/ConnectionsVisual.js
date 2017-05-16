@@ -5,15 +5,13 @@ import * as d3 from 'd3';
 import d3Wrap from 'react-d3-wrap';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import SearchField from '../components/SearchField';
+
 import {
   getConnectionDataByAuthor,
   setAuthorQuery,
   getCoAuthorData } from '../actions/arxiv';
 import dummy from '../helpers/dummyConnectionsD3Data.json';
-import { inputStyle, searchIcon } from '../theme/sharedStyles';
-
-
-console.log(dummy);
 
 let g, vis, width, height, d3Colors; // eslint-disable-line
 
@@ -81,29 +79,48 @@ const ConnectionsVisual = d3Wrap({
 
       if (!vis) {
         vis = d3.select(svg).attr('id', 'd3root');
-        // Append background gradient definitions
-        const defs = vis
-          .append('defs');
 
-        d3Colors = d3.scaleLinear()
+
+        d3Colors = [
+          d3.scaleLinear()
+          .domain([-1, 10])
+          .range(['hsl(235,40%,60%)', 'hsl(245,60%,70%)'])
+          .interpolate(d3.interpolateHcl),
+          d3.scaleLinear()
+          .domain([-1, 6])
+          .range(['hsl(228,50%,60%)', 'hsl(235,40%,60%)'])
+          .interpolate(d3.interpolateHcl),
+          d3.scaleLinear()
+          .domain([-1, 21])
+          .range(['hsl(200,60%,50%)', 'hsl(228,50%,60%)'])
+          .interpolate(d3.interpolateHcl),
+          d3.scaleLinear()
+          .domain([-1, 8])
+          .range(['hsl(190,80%,60%)', 'hsl(200,60%,50%)'])
+          .interpolate(d3.interpolateHcl),
+          d3.scaleLinear()
           .domain([-1, 5])
-          .range(['hsl(152,80%,80%)', 'hsl(228,30%,40%)'])
-          .interpolate(d3.interpolateHcl);
-
-        // TODO: adjust for final num groups
-        for (let i = 1; i < 5; i++) {
-          const b = defs.append('radialGradient')
-            .attr('id', `background${i}`);
-
-          b.append('stop')
-            .attr('offset', '30%')
-            .attr('stop-color', d3Colors(i - 1));
-
-          b.append('stop')
-            .attr('offset', '95%')
-            .attr('stop-color', d3Colors(i));
-        }
+          .range(['hsl(180,70%,50%)', 'hsl(190,80%,60%)'])
+          .interpolate(d3.interpolateHcl),
+          d3.scaleLinear()
+          .domain([-1, 32])
+          .range(['hsl(152,80%,80%)', 'hsl(160,80%,30%)'])
+          .interpolate(d3.interpolateHcl),
+          d3.scaleLinear()
+          .domain([-1, 6])
+          .range(['hsl(40,70%,55%)', 'hsl(50,70%,60%)'])
+          .interpolate(d3.interpolateHcl),
+          d3.scaleLinear()
+          .domain([-1, 36])
+          .range(['hsl(25,60%,45%)', 'hsl(20,80%,50%)'])
+          .interpolate(d3.interpolateHcl),
+          d3.scaleLinear()
+          .domain([-1, 10])
+          .range(['hsl(0,50%,30%)', 'hsl(0,80%,50%)'])
+          .interpolate(d3.interpolateHcl)
+        ];
       }
+
       forceSimulation = d3.forceSimulation()
         .force('link',
           d3.forceLink()
@@ -120,7 +137,7 @@ const ConnectionsVisual = d3Wrap({
         // ========================= Apply data ============================== //
         // =========================== DEFINE ENTER ========================= //
       vis.selectAll('g').remove();
-      
+
       const link = vis.append('g')
         .attr('class', 'link')
         .selectAll('line')
@@ -136,7 +153,11 @@ const ConnectionsVisual = d3Wrap({
         .enter()
         .append('circle')
           .attr('r', d => Math.sqrt(d.paperData.length) * 2)
-          .attr('fill', d => d3Colors(d.group))
+          .attr('fill', (d) => {
+            const gradient = d3Colors[d.group[0] - 1];
+            console.log(gradient)
+            return gradient(d.group[1]);
+          })
           .call(d3.drag()
               .on('start', dragstarted)
               .on('drag', dragged)
@@ -196,15 +217,15 @@ const styles = {
 // make sure coauthor fetching works
 
 class ConnectionsVisualPage extends Component {
-  // constructor(props) {
-  //   super(props)
-  //   this.state = {
-  //     data: dummy[0]
-  //   };
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: dummy[0]
+    };
+  }
   componentDidMount() {
     // TODO: get data
-    // setTimeout(() => this.setState({ data: dummy[1] }), 5000);
+    setTimeout(() => this.setState({ data: dummy[1] }), 5000);
   }
   render() {
     const {
@@ -220,21 +241,15 @@ class ConnectionsVisualPage extends Component {
             style={styles.button}
             onTouchTap={getCoAuthors} />
           : <div style={styles.searchContainer}>
-            <input
-              style={inputStyle}
-              placeholder="Author Name..."
-              onChange={setQuery}
-              onKeyPress={({ charCode }) => (charCode === 13) && searchAuthor()}
+            <SearchField
+              onSearchInput={setQuery}
+              search={searchAuthor}
+              filter="Author's full name"
             />
-            <i
-              style={{ ...searchIcon, ...styles.iconPosition }}
-              className='fa fa-search'
-              onTouchTap={searchAuthor}
-            ></i>
           </div>
         }
         <ConnectionsVisual
-          data={data}
+          data={this.state.data}
           width={800}
           height={800}
         />
@@ -248,7 +263,7 @@ const mapStateToProps = state => ({
   nextCoAuthors: state.arxiv.coAuthors
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   searchAuthor: () => dispatch(getConnectionDataByAuthor()),
   setQuery: e => dispatch(setAuthorQuery(e.target.value)),
   getCoAuthors: () => dispatch(getCoAuthorData())
