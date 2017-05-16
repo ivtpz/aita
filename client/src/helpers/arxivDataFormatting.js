@@ -1,3 +1,5 @@
+import categories from './arxivCategories';
+
 const translate = {
   math: 'Math',
   physics: 'Classical Physics',
@@ -21,6 +23,18 @@ const groups = {
   noPrefix: 1,
   'astro-ph': 2
 };
+
+// TODO: make sure this thingie works...
+const colorGroups = Object.keys(categories).reduce((obj, g) => {
+  let i = 0;
+  for (const c in categories[g]) {
+    obj[`${g}.${c}`] = [groups[g], i];
+    i++;
+  }
+  return obj;
+}, {});
+
+console.log(colorGroups);
 
 const physicsSubCats = ['physics', 'nlin', 'cond-mat', 'astro-ph'];
 
@@ -94,7 +108,7 @@ const getMainSubject = (papers) => {
   const count = {};
   papers.forEach((p) => {
     const catName = p.category._term.split('.');
-    const category = catName.length === 1 ? 'noPrefix' : catName[0];
+    const category = catName.length === 1 ? `noPrefix.${catName[0]}` : catName.join('.');
     count[category] = count[category] ? count[category] + 1 : 1;
   });
   console.log('counts: ', count);
@@ -134,7 +148,7 @@ export const formatConnections = (prevData, newAuthor) => {
   newData.nodes.push({
     ...newAuthor,
     paperData: newAuthor.paperData.map(p => p.id),
-    group: groups[getMainSubject(newAuthor.paperData)]
+    group: colorGroups[getMainSubject(newAuthor.paperData)]
   });
   console.log('formatted: ', newData)
   return newData;
