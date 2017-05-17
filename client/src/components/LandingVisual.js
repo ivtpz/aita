@@ -474,7 +474,6 @@ ${d.data.name}\n${format(d.value)} Papers`);
   },
   destroy() {
     g = undefined;
-    console.log('destroyed');
     // TODO: unmount component on destroy
     d3.select('#d3root').selectAll('*').remove();
   }
@@ -483,6 +482,9 @@ ${d.data.name}\n${format(d.value)} Papers`);
 // Controls and visual
 
 const styles = {
+  visContainer: {
+    marginTop: 100
+  },
   slideContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -526,7 +528,7 @@ class LandingVisualPage extends Component {
     } = this.props;
     const currYear = new Date().getFullYear();
     return (
-      <div>
+      <div style={styles.visContainer}>
         <LandingVisual
           data={data}
           width={800}
