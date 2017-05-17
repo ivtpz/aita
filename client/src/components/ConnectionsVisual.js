@@ -69,17 +69,10 @@ const ConnectionsVisual = d3Wrap({
     width = svg.getAttribute('width');
     height = svg.getAttribute('height');
     if (data.length || data.nodes) {
-      if (!stateData) {
-        // initializeData({ ...data[0] });
-        initializeData({ ...data });
-      } else {
-        // updateData({ ...data[1] });
-        updateData({ ...data });
-      }
+      initializeData({ ...data });
 
       if (!vis) {
         vis = d3.select(svg).attr('id', 'd3root');
-
 
         d3Colors = [
           d3.scaleLinear()
@@ -189,6 +182,7 @@ const ConnectionsVisual = d3Wrap({
     }
   },
   destroy() {
+    vis = undefined;
     d3.select('#d3root').selectAll('*').remove();
   }
 });
