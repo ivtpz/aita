@@ -28,17 +28,19 @@ const generateEmail = (name, articleData) => `
           <td align="center" valign="top">
             <table border="0" cellpadding="10" cellspacing="0" width="600" id="emailContainer">
               <tr>
-                <td align="center" valign="top" style="font-size:26px;background-color:papayawhip">
+                <td align="center" valign="top" style="font-size:26px;background-color:papayawhip;border:3px solid #36bc98;">
                   Hi ${name},
                   here are your current Arxiv recommendations from 
-                  <a href="aita.com" style="color:#F9736C;text-decoration:none">AITA</a>
+                  <a href="http://localhost:1337" target="blank" style="color:#F9736C;text-decoration:none;">AITA</a>
                 </td>
               </tr>
+              <tr><td></td></tr>
               <tr>
-                <td align="center" valign="top" style="font-size:20px;padding-bottom:20px;background-color:papayawhip">
-                  Head over to <a href="todo" style="color:#F9736C">Your Recommendations</a> page to let us know which papers interest you, and make our system moar smartr
+                <td align="center" valign="top" style="font-size:20px;padding-bottom:20px;">
+                  Head over to <a href="http://localhost:1337" style="color:#F9736C">Your Recommendations</a> page to let us know which papers interest you, and make our system moar smartr
                 </td>
               </tr>
+              <tr><td></td></tr>
               ${articleToHTML(articleData).join('\n')}
             </table>
           </td>
