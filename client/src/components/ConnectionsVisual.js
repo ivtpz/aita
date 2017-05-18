@@ -212,7 +212,7 @@ const styles = {
   }
 };
 
-// PRIMARY TODOS: set color by subcategory
+// PRIMARY TODOS: test color by subcategory
 // get better dummy data
 // make sure coauthor fetching works
 
