@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --exec babel-node server.js",
-    "start-dev": "NODE_ENV=development nodemon --exec babel-node server.js"
+    "start-dev": "NODE_ENV=development nodemon --exec babel-node server.js",
+    "build": "grunt"
   },
   "keywords": [
     "arxiv"
@@ -20,6 +21,7 @@
     "babel-polyfill": "^6.23.0",
     "body-parser": "^1.17.1",
     "d3": "^4.8.0",
+    "dotenv": "^5.0.0",
     "express": "^4.15.2",
     "mailgun": "^0.5.0",
     "material-ui": "^0.17.3",

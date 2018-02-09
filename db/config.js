@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
-const host = process.env.DBHOST || 'localhost';
+require('dotenv').config();
 
-mongoose.connect(`mongodb://${host}/aita`);
+mongoose.connect(`mongodb://admin:${process.env.DB_PASS}@ds012058.mlab.com:12058/aita`);
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
