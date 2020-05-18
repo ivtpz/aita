@@ -142,5 +142,13 @@ export default {
     'nucl-ex': 'Nuclear Experiment',
     'nucl-th': 'Nuclear Theory',
     'quant-ph': 'Quantum Physics'
+  },
+  'astro-ph': {
+    GA: 'Astrophysics of Galaxies',
+    CO: 'Cosmology and Nongalactic Astrophysics',
+    EP: 'Earth and Planetary Astrophysics',
+    HE: 'High Energy Astophysical Phenomena',
+    IM: 'Instrumentation and Methods for Astrophysics',
+    SR: 'Solar and Stellar Astrophysics'
   }
 };
